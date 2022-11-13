@@ -132,16 +132,24 @@ const rehandleSelectChange = (val: number[]) => {
   selectedRowKeys.value = val;
 };
 // 分页钩子
-const rehandlePageChange = (curr, pageInfo) => {
-  console.log("分页变化", curr, pageInfo);
+const rehandlePageChange = (curr) => {
+  console.log("分页变化", curr);
 };
 // 查看详情
 const getFormInfo = (row) => {
   console.log(row.id);
+  router.push({
+    path:'/dataCenter/detail',
+    query:{formID:row.id}
+  });
 };
 // 修改
 const editForm = (row) => {
   console.log(row.id);
+  router.push({
+    path:'/dataCenter/edit',
+    query:{formID:row.id}
+  });
 };
 // 删除
 const deleteForm = (row) => {

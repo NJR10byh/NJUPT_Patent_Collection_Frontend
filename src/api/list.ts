@@ -1,12 +1,19 @@
-import { request } from '@/utils/request';
-import type { formListResult } from '@/api/model/formModel';
+import { request } from "@/utils/request";
+import type { formListResult } from "@/api/model/formModel";
 
 const Api = {
-  BaseList: '/getFormList',
+  FormList: "/getFormList",
+  FormDetail: "/getFormById"
 };
 
 export function getFormList() {
   return request.post<formListResult>({
-    url: Api.BaseList,
+    url: Api.FormList
+  });
+}
+
+export function getFormById() {
+  return request.post<formListResult>({
+    url: Api.FormDetail
   });
 }

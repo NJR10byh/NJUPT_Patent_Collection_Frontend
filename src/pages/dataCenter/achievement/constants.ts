@@ -1,3 +1,4 @@
+// index.vue tableColumns
 export const FORM_TABLE_COLUMNS = [
   { colKey: "row-select", type: "multiple", width: 64, fixed: "left" },
   {

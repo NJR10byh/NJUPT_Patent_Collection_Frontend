@@ -19,6 +19,12 @@ export default [
         name: "achievementDetail",
         component: () => import("@/pages/dataCenter/achievement/detail.vue"),
         meta: { title: "成果征集表详情", hidden: true }
+      },
+      {
+        path: "edit",
+        name: "achievementEdit",
+        component: () => import("@/pages/dataCenter/achievement/edit.vue"),
+        meta: { title: "修改成果征集表", hidden: true }
       }
     ]
   }
