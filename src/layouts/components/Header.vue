@@ -149,11 +149,11 @@ const handleLogout = () => {
 };
 
 const navToGitHub = () => {
-  window.open("https://github.com/tencent/tdesign-vue-next-starter");
+  window.open("https://github.com/applenjr/NJUPT_Patent_Collection_Frontend");
 };
 
 const navToHelper = () => {
-  window.open("http://tdesign.tencent.com/starter/docs/get-started");
+  window.open("https://tdesign.tencent.com/starter/docs/vue-next/get-started");
 };
 </script>
 <style lang="less" scoped>

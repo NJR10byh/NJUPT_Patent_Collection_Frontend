@@ -135,7 +135,7 @@ const onSubmit = async ({ validateResult }) => {
 
       MessagePlugin.success("登陆成功");
       router.push({
-        path: "/dashboard/achievement"
+        path: "/dataCenter/achievement"
       });
     } catch (e) {
       console.log(e);

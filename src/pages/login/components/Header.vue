@@ -16,22 +16,23 @@
 </template>
 
 <script setup lang="ts">
-import LogoFullIcon from '@/assets/assets-logo-full.svg?component';
-import { useSettingStore } from '@/store';
+import LogoFullIcon from "@/assets/assets-logo-full.svg?component";
+import { useSettingStore } from "@/store";
 
 const settingStore = useSettingStore();
 const toggleSettingPanel = () => {
   settingStore.updateConfig({
-    showSettingPanel: true,
+    showSettingPanel: true
   });
 };
 
 const navToGitHub = () => {
-  window.open('https://github.com/tencent/tdesign-vue-next-starter');
+  console.log("aaa");
+  window.open("https://github.com/applenjr/NJUPT_Patent_Collection_Frontend");
 };
 
 const navToHelper = () => {
-  window.open('http://tdesign.tencent.com/starter/docs/get-started');
+  window.open("https://tdesign.tencent.com/starter/docs/vue-next/get-started");
 };
 </script>
 
@@ -53,6 +54,7 @@ const navToHelper = () => {
   .operations-container {
     display: flex;
     align-items: center;
+
     .t-button {
       margin-left: 16px;
     }
