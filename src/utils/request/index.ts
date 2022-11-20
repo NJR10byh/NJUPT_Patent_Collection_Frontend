@@ -1,16 +1,16 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
-import isString from 'lodash/isString';
-import merge from 'lodash/merge';
-import type { AxiosTransform, CreateAxiosOptions } from './AxiosTransform';
-import { VAxios } from './Axios';
-import proxy from '@/config/proxy';
-import { joinTimestamp, formatRequestDate, setObjToUrlParams } from './utils';
-import { TOKEN_NAME } from '@/config/global';
+import isString from "lodash/isString";
+import merge from "lodash/merge";
+import type { AxiosTransform, CreateAxiosOptions } from "./AxiosTransform";
+import { VAxios } from "./Axios";
+import proxy from "@/config/proxy";
+import { joinTimestamp, formatRequestDate, setObjToUrlParams } from "./utils";
+import { TOKEN_NAME } from "@/config/global";
 
-const env = import.meta.env.MODE || 'development';
+const env = import.meta.env.MODE || "development";
 
 // 如果是mock模式 或 没启用直连代理 就不配置host 会走本地Mock拦截 或 Vite 代理
-const host = env === 'mock' || !proxy.isRequestProxy ? '' : proxy[env].host;
+const host = env === "mock" || !proxy.isRequestProxy ? "" : proxy[env].host;
 
 // 数据处理，方便区分多种处理方式
 const transform: AxiosTransform = {
@@ -20,7 +20,7 @@ const transform: AxiosTransform = {
 
     // 如果204无内容直接返回
     const method = res.config.method?.toLowerCase();
-    if (res.status === 204 || method === 'put' || method === 'patch') {
+    if (res.status === 204 || method === "put" || method === "patch") {
       return res;
     }
 
@@ -37,7 +37,7 @@ const transform: AxiosTransform = {
     // 错误的时候返回
     const { data } = res;
     if (!data) {
-      throw new Error('请求接口错误');
+      throw new Error("请求接口错误");
     }
 
     //  这里 code为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
@@ -71,7 +71,7 @@ const transform: AxiosTransform = {
     if (formatDate && data && !isString(data)) {
       formatRequestDate(data);
     }
-    if (config.method?.toUpperCase() === 'GET') {
+    if (config.method?.toUpperCase() === "GET") {
       if (!isString(params)) {
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
         config.params = Object.assign(params || {}, joinTimestamp(joinTime, false));
@@ -85,7 +85,7 @@ const transform: AxiosTransform = {
         formatRequestDate(params);
       }
       if (
-        Reflect.has(config, 'data') &&
+        Reflect.has(config, "data") &&
         config.data &&
         (Object.keys(config.data).length > 0 || data instanceof FormData)
       ) {
@@ -143,7 +143,7 @@ const transform: AxiosTransform = {
     });
 
     return backoff.then((config) => request.request(config));
-  },
+  }
 };
 
 function createAxios(opt?: Partial<CreateAxiosOptions>) {
@@ -152,13 +152,13 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
       <CreateAxiosOptions>{
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes
         // 例如: authenticationScheme: 'Bearer'
-        authenticationScheme: '',
+        authenticationScheme: "",
         // 超时
         timeout: 10 * 1000,
         // 携带Cookie
         withCredentials: true,
         // 头信息
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        headers: { "Content-Type": "application/json;charset=UTF-8" },
         // 数据处理方式
         transform,
         // 配置项，下面的选项都可以在独立的接口请求中覆盖
@@ -170,7 +170,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口前缀
           // 例如: https://www.baidu.com/api
           // urlPrefix: '/api'
-          urlPrefix: '/api',
+          urlPrefix: "/collection_dev",
           // 是否返回原生响应头 比如：需要获取响应头时使用该属性
           isReturnNativeResponse: false,
           // 需要对返回数据进行处理
@@ -188,12 +188,13 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 重试
           retry: {
             count: 3,
-            delay: 1000,
-          },
-        },
+            delay: 1000
+          }
+        }
       },
-      opt || {},
-    ),
+      opt || {}
+    )
   );
 }
+
 export const request = createAxios();

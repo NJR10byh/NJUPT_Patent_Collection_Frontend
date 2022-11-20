@@ -27,7 +27,7 @@ const defaultRouterList: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    redirect: "/dataCenter/achievement"
+    redirect: "/login"
   },
   {
     path: "/:w+",

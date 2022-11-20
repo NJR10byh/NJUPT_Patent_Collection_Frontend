@@ -1,6 +1,12 @@
 // index.vue tableColumns
 export const FORM_TABLE_COLUMNS = [
-  { colKey: "row-select", type: "multiple", width: 64, fixed: "left" },
+  // { colKey: "row-select", type: "multiple", width: 64, fixed: "left" },
+  {
+    title: "序号",
+    align: "center",
+    colKey: "index",
+    width: 80
+  },
   {
     title: "成果名称",
     align: "left",
@@ -11,7 +17,7 @@ export const FORM_TABLE_COLUMNS = [
   {
     title: "成果联系人",
     align: "left",
-    colKey: "achievementContractPerson",
+    colKey: "achievementContactPerson",
     width: 150,
     ellipsis: true
   },
@@ -23,13 +29,13 @@ export const FORM_TABLE_COLUMNS = [
   },
   {
     title: "电话",
-    colKey: "achievementContractPhone",
+    colKey: "achievementContactPhone",
     width: 150,
     ellipsis: true
   },
   {
     title: "Email",
-    colKey: "achievementContractEmail",
+    colKey: "achievementContactEmail",
     width: 200,
     ellipsis: true
   },

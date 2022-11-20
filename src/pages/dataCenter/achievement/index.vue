@@ -3,15 +3,29 @@
     <t-card class="list-card-container">
       <t-row justify="space-between">
         <div class="left-operation-container">
-          <p v-if="!!selectedRowKeys.length" class="selected-count">已选{{ selectedRowKeys.length }}项</p>
+          <p v-if="!!selectedRowKeys.length" class="selected-count">
+            已选{{ selectedRowKeys.length }}项
+          </p>
         </div>
         <div class="search-input">
-          <t-input class="searchInputStyle" v-model="searchValue.achievementName" placeholder="成果名称"
-                   clearable></t-input>
-          <t-input class="searchInputStyle" v-model="searchValue.achievementContractPerson" placeholder="成果联系人"
-                   clearable></t-input>
-          <t-input class="searchInputStyle" v-model="searchValue.jobNumber" placeholder="工号"
-                   clearable></t-input>
+          <t-input
+            class="searchInputStyle"
+            v-model="searchValue.achievementName"
+            placeholder="成果名称"
+            clearable
+          ></t-input>
+          <t-input
+            class="searchInputStyle"
+            v-model="searchValue.achievementContactPerson"
+            placeholder="成果联系人"
+            clearable
+          ></t-input>
+          <t-input
+            class="searchInputStyle"
+            v-model="searchValue.jobNumber"
+            placeholder="工号"
+            clearable
+          ></t-input>
           <t-button class="searchBtnStyle" @click="searchForm">
             <t-icon name="search"></t-icon>
             查询
@@ -28,16 +42,24 @@
         :selected-row-keys="selectedRowKeys"
         :loading="dataLoading"
         :header-affixed-top="{ offsetTop, container: getContainer }"
-        :horizontal-scroll-affixed-bottom="{offsetBottom:'64', container: getContainer }"
-        :pagination-affixed-bottom="{offsetBottom:'0', container: getContainer }"
+        :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
+        :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
         @page-change="rehandlePageChange"
         @select-change="rehandleSelectChange"
         style="margin-top: 20px"
       >
         <template #settings="slotProps">
-          <t-button theme="primary" @click="getFormInfo(slotProps.row)">查看</t-button>
-          <t-button theme="warning" @click="editForm(slotProps.row)">修改</t-button>
-          <t-popconfirm content="确认删除吗?" theme="danger" @confirm="deleteForm(slotProps.row)">
+          <t-button theme="primary" @click="getFormInfo(slotProps.row)">
+            查看
+          </t-button>
+          <t-button theme="warning" @click="editForm(slotProps.row)">
+            修改
+          </t-button>
+          <t-popconfirm
+            content="确认删除吗?"
+            theme="danger"
+            @confirm="deleteForm(slotProps.row)"
+          >
             <t-button theme="danger">删除</t-button>
           </t-popconfirm>
         </template>
@@ -45,12 +67,6 @@
     </t-card>
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  name: "ListBase"
-};
-</script>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
@@ -61,6 +77,7 @@ import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
 
 import { FORM_TABLE_COLUMNS } from "./constants";
+import { request } from "@/utils/request";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -77,16 +94,16 @@ const dataLoading = ref(false);
 const formListTableData = ref([]);
 // 表格分页
 const pagination = ref({
-  total: 100,
+  total: 0,
   pageSize: 20,
   current: 1
 });
 // 查询表格
 const searchValue = ref({
-  page: pagination.value.current,
-  size: pagination.value.pageSize,
-  achievementName: "",// 成果名称
-  achievementContractPerson: "",// 成果联系人
+  pageNum: pagination.value.current,
+  pageSize: pagination.value.pageSize,
+  achievementName: "", // 成果名称
+  achievementContactPerson: "", // 成果联系人
   jobNumber: "" // 工号
 });
 // 已选择的row
@@ -95,7 +112,10 @@ const selectedRowKeys = ref([]);
 const offsetTop = computed(() => {
   return store.isUseTabsRouter ? 48 : 0;
 });
-
+// 获取当前容器
+const getContainer = () => {
+  return document.querySelector(`.${prefix}-layout`);
+};
 
 /**
  * methods
@@ -104,29 +124,61 @@ const offsetTop = computed(() => {
 // 组件挂载完成后执行
 onMounted(() => {
   // 获取表格数据
-  fetchData();
+  const requestUrl = "/question/searchQuestion";
+  getFormData(requestUrl);
 });
-const getContainer = () => {
-  return document.querySelector(`.${prefix}-layout`);
-};
 // 获取表格数据
-const fetchData = async () => {
+const getFormData = async (requestUrl) => {
   dataLoading.value = true;
-  try {
-    const { formList } = await getFormList();
-    console.log(formList);
-    formListTableData.value = formList;
-    pagination.value = {
-      ...pagination.value,
-      total: formList.length
-    };
-  } catch (e) {
-    console.log(e);
-  } finally {
+  request.post({
+    url: requestUrl,
+    data: searchValue.value
+  }).then(res => {
+    console.log(res);
+    formListTableData.value = res.records;
+    pagination.value.total = res.total;
+    for (let i = 0; i < formListTableData.value.length; i++) {
+      formListTableData.value[i].index = pagination.value.current * i + i + 1;
+    }
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
     dataLoading.value = false;
-  }
+  });
+};
+// 查询征集表
+const searchForm = () => {
+  const requestUrl = "/question/searchQuestion";
+  searchValue.value.pageNum = 1;
+  searchValue.value.pageSize = 20;
+  getFormData(requestUrl);
+};
+// 查看详情
+const getFormInfo = (row) => {
+  console.log(row.id);
+  router.push({
+    path: "/dataCenter/detail",
+    query: { formID: row.id }
+  });
+};
+// 修改
+const editForm = (row) => {
+  console.log(row.id);
+  router.push({
+    path: "/dataCenter/edit",
+    query: { formID: row.id }
+  });
+};
+// 删除
+const deleteForm = (row) => {
+  console.log(row.id);
 };
 
+
+/**
+ * 表格操作钩子
+ * @param val
+ */
 // 表格选择钩子
 const rehandleSelectChange = (val: number[]) => {
   selectedRowKeys.value = val;
@@ -134,26 +186,12 @@ const rehandleSelectChange = (val: number[]) => {
 // 分页钩子
 const rehandlePageChange = (curr) => {
   console.log("分页变化", curr);
-};
-// 查看详情
-const getFormInfo = (row) => {
-  console.log(row.id);
-  router.push({
-    path:'/dataCenter/detail',
-    query:{formID:row.id}
-  });
-};
-// 修改
-const editForm = (row) => {
-  console.log(row.id);
-  router.push({
-    path:'/dataCenter/edit',
-    query:{formID:row.id}
-  });
-};
-// 删除
-const deleteForm = (row) => {
-  console.log(row.id);
+  const requestUrl = "/question/searchQuestion";
+  searchValue.value.pageNum = curr.current;
+  searchValue.value.pageSize = curr.pageSize;
+  pagination.value.current = curr.current;
+  pagination.value.pageSize = curr.pageSize;
+  getFormData(requestUrl);
 };
 </script>
 
@@ -182,7 +220,8 @@ const deleteForm = (row) => {
   //border: 1px solid red;
   display: flex;
 
-  .searchInputStyle, .searchBtnStyle {
+  .searchInputStyle,
+  .searchBtnStyle {
     margin-left: 8px;
   }
 
