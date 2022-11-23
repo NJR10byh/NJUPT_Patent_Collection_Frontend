@@ -14,7 +14,7 @@
         </div>
         <div class="info-item">
           <h1>成果联系人</h1>
-          <t-input v-model="formData.achievementContractPerson"></t-input>
+          <t-input v-model="formData.achievementContactPerson"></t-input>
         </div>
         <div class="info-item">
           <h1>职称</h1>
@@ -22,11 +22,11 @@
         </div>
         <div class="info-item">
           <h1>电话</h1>
-          <t-input v-model="formData.achievementContractPhone"></t-input>
+          <t-input v-model="formData.achievementContactPhone"></t-input>
         </div>
         <div class="info-item">
           <h1>Email</h1>
-          <t-input v-model="formData.achievementContractEmail"></t-input>
+          <t-input v-model="formData.achievementContactEmail"></t-input>
         </div>
         <div class="info-item">
           <h1>所在学院</h1>
@@ -97,6 +97,8 @@
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getFormById } from "@/api/list";
+import { setObjToUrlParams } from "@/utils/request/utils";
+import { request } from "@/utils/request";
 
 const router = useRouter();
 const route = useRoute();
@@ -104,7 +106,29 @@ const route = useRoute();
 /**
  * data
  */
-const formData = ref({});
+const formData = ref({
+    id: null,
+    patentList: "",
+    achievementName: "",
+    achievementContactPerson: "",
+    jobTitle: "",
+    achievementContactPhone: "",
+    achievementContactEmail: "",
+    department: "",
+    jobNumber: "",
+    technicalMaturity: "",
+    technicalClassification: "",
+    achievementIntroduce: "",
+    keyTechnologies: "",
+    fieldMarket: "",
+    achievementPrice: null,
+    transformWay: "",
+    createUser: "",
+    createTime: "",
+    updateUser: "",
+    updateTime: ""
+  }
+);
 const checkList = ref([]);
 
 /**
@@ -119,8 +143,18 @@ onMounted(() => {
 });
 
 const fetchData = async () => {
-  formData.value = await getFormById();
-  console.log(formData.value);
+  let requestUrl = setObjToUrlParams("/form/getFormById", route.query);
+  request.post({
+    url: requestUrl
+  }).then(res => {
+    console.log(res);
+    formData.value = res;
+    console.log(formData.value);
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+
+  });
   checkList.value = formData.value.transformWay.split(",");
 };
 

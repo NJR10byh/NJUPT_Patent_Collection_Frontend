@@ -2,81 +2,17 @@
   <div>
     <t-card class="list-card-container">
       <t-row justify="space-between">
-        <div class="left-operation-container">
-          <p v-if="!!selectedRowKeys.length" class="selected-count">
-            已选{{ selectedRowKeys.length }}项
-          </p>
-        </div>
-        <div class="search-input">
-          <t-input
-            class="searchInputStyle"
-            v-model="searchValue.achievementName"
-            placeholder="成果名称"
-            clearable
-          ></t-input>
-          <t-input
-            class="searchInputStyle"
-            v-model="searchValue.achievementContactPerson"
-            placeholder="成果联系人"
-            clearable
-          ></t-input>
-          <t-input
-            class="searchInputStyle"
-            v-model="searchValue.jobNumber"
-            placeholder="工号"
-            clearable
-          ></t-input>
-          <t-button class="searchBtnStyle" @click="searchForm">
-            <t-icon name="search"></t-icon>
-            查询
-          </t-button>
-        </div>
+
       </t-row>
-      <t-table
-        :data="formListTableData"
-        :columns="FORM_TABLE_COLUMNS"
-        row-key="id"
-        vertical-align="center"
-        hover
-        :pagination="pagination"
-        :selected-row-keys="selectedRowKeys"
-        :loading="dataLoading"
-        :header-affixed-top="{ offsetTop, container: getContainer }"
-        :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
-        :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
-        @page-change="rehandlePageChange"
-        @select-change="rehandleSelectChange"
-        style="margin-top: 20px"
-      >
-        <template #settings="slotProps">
-          <t-button theme="primary" @click="getFormInfo(slotProps.row)">
-            查看
-          </t-button>
-          <t-button theme="warning" @click="editForm(slotProps.row)">
-            修改
-          </t-button>
-          <t-popconfirm
-            content="确认删除吗?"
-            theme="danger"
-            @confirm="deleteForm(slotProps.row)"
-          >
-            <t-button theme="danger">删除</t-button>
-          </t-popconfirm>
-        </template>
-      </t-table>
     </t-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
-import { getFormList } from "@/api/list";
 import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
-
-import { FORM_TABLE_COLUMNS } from "./constants";
 import { request } from "@/utils/request";
 import { setObjToUrlParams } from "@/utils/request/utils";
 

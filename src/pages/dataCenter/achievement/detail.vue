@@ -14,7 +14,7 @@
         </div>
         <div class="info-item">
           <h1>成果联系人</h1>
-          {{ formData.achievementContractPerson }}
+          {{ formData.achievementContactPerson }}
         </div>
         <div class="info-item">
           <h1>职称</h1>
@@ -22,11 +22,11 @@
         </div>
         <div class="info-item">
           <h1>电话</h1>
-          {{ formData.achievementContractPhone }}
+          {{ formData.achievementContactPhone }}
         </div>
         <div class="info-item">
           <h1>Email</h1>
-          {{ formData.achievementContractEmail }}
+          {{ formData.achievementContactEmail }}
         </div>
         <div class="info-item">
           <h1>所在学院</h1>
@@ -101,6 +101,8 @@
 import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getFormById } from "@/api/list";
+import { request } from "@/utils/request";
+import { setObjToUrlParams } from "@/utils/request/utils";
 
 const router = useRouter();
 const route = useRoute();
@@ -108,7 +110,30 @@ const route = useRoute();
 /**
  * data
  */
-const formData = ref({});
+const formData = ref(
+  {
+    id: null,
+    patentList: "",
+    achievementName: "",
+    achievementContactPerson: "",
+    jobTitle: "",
+    achievementContactPhone: "",
+    achievementContactEmail: "",
+    department: "",
+    jobNumber: "",
+    technicalMaturity: "",
+    technicalClassification: "",
+    achievementIntroduce: "",
+    keyTechnologies: "",
+    fieldMarket: "",
+    achievementPrice: null,
+    transformWay: "",
+    createUser: "",
+    createTime: "",
+    updateUser: "",
+    updateTime: ""
+  }
+);
 
 /**
  * methods
@@ -118,11 +143,23 @@ const formData = ref({});
 onMounted(() => {
   console.log(route.query);
   // 获取数据详情
-  fetchData();
+  getFormDetail(route.query.formID);
 });
 
-const fetchData = async () => {
-  formData.value = await getFormById();
+const getFormDetail = (formID) => {
+  // let requestUrl = "/form/getFormById?id=" + formID;
+  let requestUrl = setObjToUrlParams("/form/getFormById", route.query);
+  request.post({
+    url: requestUrl
+  }).then(res => {
+    console.log(res);
+    formData.value = res;
+    console.log(formData.value);
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+
+  });
 };
 
 </script>

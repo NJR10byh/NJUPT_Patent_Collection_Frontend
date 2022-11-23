@@ -49,7 +49,7 @@ const transform: AxiosTransform = {
       return data.data;
     }
 
-    throw new Error(`请求接口错误, 错误码: ${code}`);
+    throw new Error(data.data.errMsg);
   },
 
   // 请求前处理配置
