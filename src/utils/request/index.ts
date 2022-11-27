@@ -4,7 +4,7 @@ import merge from "lodash/merge";
 import type { AxiosTransform, CreateAxiosOptions } from "./AxiosTransform";
 import { VAxios } from "./Axios";
 import proxy from "@/config/proxy";
-import { joinTimestamp, formatRequestDate, setObjToUrlParams } from "./utils";
+import { formatRequestDate, joinTimestamp, setObjToUrlParams } from "./utils";
 import { TOKEN_NAME } from "@/config/global";
 
 const env = import.meta.env.MODE || "development";
@@ -166,10 +166,13 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口地址
           apiUrl: host,
           // 是否自动添加接口前缀
-          isJoinPrefix: true,
-          // 接口前缀
-          // 例如: https://www.baidu.com/api
-          // urlPrefix: '/api'
+          // isJoinPrefix: false, // [本地]环境
+          isJoinPrefix: true, // [开发,生产]环境
+          /**
+           * 接口前缀
+           * 例如: https://www.baidu.com/api
+           * 开发环境
+           */
           urlPrefix: "/collection_dev",
           // 是否返回原生响应头 比如：需要获取响应头时使用该属性
           isReturnNativeResponse: false,

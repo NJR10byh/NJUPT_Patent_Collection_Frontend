@@ -1,7 +1,13 @@
+<!--
+  * @author baoyuhao
+  * @date 2022/11/13 17:03:26
+  * @description
+  * @version 0.1.0
+-->
 <template>
   <div>
     <!-- 搜索专利 -->
-    <t-card class="addForm-card-container">
+    <t-card class="editForm-card-container">
       <t-row justify="space-between" class="cardTop">
         <div class="cardTitle">搜索专利</div>
         <div>
@@ -46,7 +52,7 @@
     </t-card>
 
     <!-- 已选择专利 -->
-    <t-card class="addForm-card-container">
+    <t-card class="editForm-card-container">
       <t-row justify="space-between" class="cardTop">
         <div class="cardTitle">已选择专利</div>
       </t-row>
@@ -72,7 +78,7 @@
     </t-card>
 
     <!-- 成果征集信息 -->
-    <t-card class="addForm-card-container">
+    <t-card class="editForm-card-container">
       <t-row justify="space-between" class="cardTop">
         <div class="cardTitle">成果征集信息</div>
       </t-row>
@@ -180,17 +186,22 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
-import { CHOOSED_PATENT_TABLE_COLUMNS, PATENT_TABLE_COLUMNS } from "./constants";
+import {
+  CHOOSED_PATENT_TABLE_COLUMNS,
+  PATENT_TABLE_COLUMNS
+} from "@/pages/teacher/achievementManage/addForm/constants";
 import { CheckIcon, DeleteIcon, SearchIcon } from "tdesign-icons-vue-next";
 import { validateEmail, validateMobilePhone } from "@/utils/validate";
 import { MessagePlugin } from "tdesign-vue-next";
 import { request } from "@/utils/request";
+import { setObjToUrlParams } from "@/utils/request/utils";
 
 const store = useSettingStore();
 const router = useRouter();
+const route = useRoute();
 
 /**
  * data
@@ -238,22 +249,28 @@ const choosedPatentTable = ref({
 const form = ref(null);
 //成果征集表内容
 const formInfo = ref({
-  patentList: "1001,1167,928", // 专利ID集合
+  id: "",// formID
+  patentList: "", // 专利ID集合
 
-  achievementName: "成果名称",// 成果名称
-  achievementContactPerson: "成果联系人",// 成果联系人
+  achievementName: "",// 成果名称
+  achievementContactPerson: "",// 成果联系人
   jobTitle: "",// 职称
-  achievementContactPhone: "13698007635",// 联系方式-电话
-  achievementContactEmail: "123@qq.com",// 联系方式-Email
+  achievementContactPhone: "",// 联系方式-电话
+  achievementContactEmail: "",// 联系方式-Email
   department: "",// 所在学院
-  jobNumber: "1322040001",// 工号
+  jobNumber: "",// 工号
   technicalMaturity: "",// 技术成熟度
   technicalClassification: "",// 技术分类
-  achievementIntroduce: "43423\ndsdsd\n22",// 成果介绍
+  achievementIntroduce: "",// 成果介绍
   keyTechnologies: "",// 关键技术
   fieldMarket: "",// 应用领域和市场
   achievementPrice: null,// 成果估值金额
-  transformWay: ""// 转化方式
+  transformWay: "",// 转化方式
+
+  createUser: "",// 创建人
+  createTime: "",// 创建时间
+  updateUser: "",// 更新人
+  updateTime: ""// 更新时间
 });
 // 成果征集表单校验规则
 const formRules = ref({
@@ -281,10 +298,12 @@ const transformWayCheckList = ref([]);
  */
 /* 生命周期 */
 // 组件挂载完成后执行
-onMounted(() => {
+onMounted(async () => {
   // 获取表格数据
-  const requestUrl = "/form/getFormPage";
-  getPatentData(requestUrl);
+  let requestUrl = "/form/getFormPage";
+  await getPatentData(requestUrl);
+  requestUrl = setObjToUrlParams("/form/getFormById", route.query);
+  getFormData(requestUrl);
 });
 /**
  * 操作钩子
@@ -334,24 +353,53 @@ const getPatentData = async (requestUrl) => {
   // });
 };
 
+// 获取表单数据
+const getFormData = (requestUrl) => {
+  form.value.reset();
+  request.post({
+    url: requestUrl
+  }).then(res => {
+    console.log(res);
+    formInfo.value = {
+      ...res,
+      technicalClassification: res.technicalClassification.replace(/&#10;/g, "\n"),
+      achievementIntroduce: res.achievementIntroduce.replace(/&#10;/g, "\n"),
+      keyTechnologies: res.keyTechnologies.replace(/&#10;/g, "\n"),
+      fieldMarket: res.fieldMarket.replace(/&#10;/g, "\n")
+    };
+    transformWayCheckList.value = res.transformWay.split(",");
+    delete formInfo.value.createUser;
+    delete formInfo.value.createTime;
+    delete formInfo.value.updateUser;
+    delete formInfo.value.updateTime;
+    console.log(formInfo.value);
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+
+  });
+};
+
 // 提交表单
 const onSubmit = ({ validateResult, firstError, e }) => {
   e.preventDefault();
   console.log({ validateResult, firstError, e });
   if (validateResult === true) {
     console.log(formInfo.value);
-    let requestUrl = "/form/addForm";
+    let requestUrl = "/form/updateForm";
     formInfo.value = {
       ...formInfo.value,
-      achievementIntroduce: formInfo.value.achievementIntroduce.replace(/\n/g, "&#10;")
+      technicalClassification: formInfo.value.technicalClassification.replace(/\n/g, "&#10;"),
+      achievementIntroduce: formInfo.value.achievementIntroduce.replace(/\n/g, "&#10;"),
+      keyTechnologies: formInfo.value.keyTechnologies.replace(/\n/g, "&#10;"),
+      fieldMarket: formInfo.value.fieldMarket.replace(/\n/g, "&#10;")
     };
+    console.log(formInfo.value);
     request.post({
       url: requestUrl,
       data: formInfo.value
     }).then(res => {
       MessagePlugin.success(res);
-      form.value.reset();
-      transformWayCheckList.value = [];
       router.push("/dataCenter/achievement");
     }).catch(err => {
       console.log(err);
@@ -366,7 +414,7 @@ const onSubmit = ({ validateResult, firstError, e }) => {
 
 <style lang="less" scoped>
 
-.addForm-card-container {
+.editForm-card-container {
   &:first-child {
     margin-top: 0;
   }

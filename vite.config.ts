@@ -1,5 +1,4 @@
-import { ConfigEnv, UserConfig, loadEnv } from "vite";
-import { viteMockServe } from "vite-plugin-mock";
+import { ConfigEnv, loadEnv, UserConfig } from "vite";
 import createVuePlugin from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import svgLoader from "vite-svg-loader";
@@ -45,6 +44,9 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       port: 8907,
       host: "localhost",
       proxy: {
+        // 本地环境
+        // "/form": "http://localhost:8588"
+        // 开发环境
         "/collection_dev": "http://cgzh.njupt.edu.cn:8080"
       }
     }

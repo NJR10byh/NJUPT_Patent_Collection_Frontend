@@ -27,7 +27,6 @@
             clearable
           ></t-input>
           <t-button class="searchBtnStyle" @click="searchForm">
-            <t-icon name="search"></t-icon>
             查询
           </t-button>
         </div>
@@ -39,13 +38,18 @@
         vertical-align="center"
         hover
         :pagination="pagination"
+        :loading="tableLoading"
         :selected-row-keys="selectedRowKeys"
-        :loading="dataLoading"
+        :expanded-row-keys="expandedRowKeys"
+        :expanded-row="expandedRow"
+        :expand-on-row-click="expandOnRowClick"
+        :expand-icon="expandIcon"
         :header-affixed-top="{ offsetTop, container: getContainer }"
         :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
         :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
         @page-change="rehandlePageChange"
         @select-change="rehandleSelectChange"
+        @expand-change="rehandleExpandChange"
         style="margin-top: 20px"
       >
         <template #settings="slotProps">
@@ -68,17 +72,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+<script setup lang="jsx">
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
-import { getFormList } from "@/api/list";
 import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
 
 import { FORM_TABLE_COLUMNS } from "./constants";
 import { request } from "@/utils/request";
 import { setObjToUrlParams } from "@/utils/request/utils";
+import { MessagePlugin } from "tdesign-vue-next";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -90,7 +93,7 @@ const router = useRouter();
  * 表格相关
  */
 // 表格加载
-const dataLoading = ref(false);
+const tableLoading = ref(false);
 // 表格数据
 const formListTableData = ref([]);
 // 表格分页
@@ -107,8 +110,53 @@ const searchValue = ref({
   // achievementContactPerson: "", // 成果联系人
   // jobNumber: "" // 工号
 });
+// 是否允许点击表格行时展开
+const expandOnRowClick = ref(true);
+// 不显示图标
+const expandIcon = ref(false);
 // 已选择的row
 const selectedRowKeys = ref([]);
+// 展开行的key
+const expandedRowKeys = ref([]);
+// 展开行显示的具体内容
+const expandedRow = (h, { row }) => (
+  <div>
+    <p>
+      <b>职称：</b>
+      <span>{row.jobTitle}</span>
+    </p>
+    <br />
+    <p>
+      <b>电话：</b>
+      <span>{row.achievementContactPhone}</span>
+    </p>
+    <br />
+    <p>
+      <b>Email：</b>
+      <span>{row.achievementContactEmail}</span>
+    </p>
+    <br />
+    <p>
+      <b>所在学院：</b>
+      <span>{row.department}</span>
+    </p>
+    <br />
+    <p>
+      <b>技术成熟度：</b>
+      <span>{row.technicalMaturity}</span>
+    </p>
+    <br />
+    <p>
+      <b>成果估值金额：</b>
+      <span>{row.achievementPrice} 万元</span>
+    </p>
+    <br />
+    <p>
+      <b>转化方式：</b>
+      <span>{row.transformWay}</span>
+    </p>
+  </div>
+);
 // 根据是否使用多Tab页判断offsetTop
 const offsetTop = computed(() => {
   return store.isUseTabsRouter ? 48 : 0;
@@ -125,12 +173,16 @@ const getContainer = () => {
 // 组件挂载完成后执行
 onMounted(() => {
   // 获取表格数据
-  const requestUrl = "/form/getFormPage";
-  getFormData(requestUrl);
+  initTableData();
 });
+// 初始化表格数据
+const initTableData = () => {
+  searchValue.value.currPage = 1;
+  getFormData("/form/getFormPage");
+};
 // 获取表格数据
 const getFormData = async (requestUrl) => {
-  dataLoading.value = true;
+  tableLoading.value = true;
   requestUrl = setObjToUrlParams(requestUrl, searchValue.value);
   request.post({
     url: requestUrl,
@@ -140,12 +192,12 @@ const getFormData = async (requestUrl) => {
     formListTableData.value = res.records;
     pagination.value.total = res.total;
     for (let i = 0; i < formListTableData.value.length; i++) {
-      formListTableData.value[i].index = pagination.value.current * i + i + 1;
+      formListTableData.value[i].index = (pagination.value.current - 1) * pagination.value.pageSize + i + 1;
     }
   }).catch(err => {
     console.log(err);
   }).finally(() => {
-    dataLoading.value = false;
+    tableLoading.value = false;
   });
 };
 // 查询征集表
@@ -157,7 +209,7 @@ const searchForm = () => {
 };
 // 查看详情
 const getFormInfo = (row) => {
-  console.log(row);
+  window.event.cancelBubble = true;
   router.push({
     path: "/dataCenter/detail",
     query: { id: row.id }
@@ -165,7 +217,7 @@ const getFormInfo = (row) => {
 };
 // 修改
 const editForm = (row) => {
-  console.log(row.id);
+  window.event.cancelBubble = true;
   router.push({
     path: "/dataCenter/edit",
     query: { id: row.id }
@@ -173,7 +225,19 @@ const editForm = (row) => {
 };
 // 删除
 const deleteForm = (row) => {
-  console.log(row.id);
+  window.event.cancelBubble = true;
+  let obj = { id: row.id };
+  let requestUrl = setObjToUrlParams("/form/deleteForm", obj);
+  request.post({
+    url: requestUrl
+  }).then(res => {
+    console.log(res);
+    MessagePlugin.success(res);
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+    initTableData();
+  });
 };
 
 
@@ -182,8 +246,13 @@ const deleteForm = (row) => {
  * @param val
  */
 // 表格选择钩子
-const rehandleSelectChange = (val: number[]) => {
+const rehandleSelectChange = (val) => {
   selectedRowKeys.value = val;
+};
+// 表格展开钩子
+const rehandleExpandChange = (value, params) => {
+  expandedRowKeys.value = value;
+  console.log("rehandleExpandChange", value, params);
 };
 // 分页钩子
 const rehandlePageChange = (curr) => {
