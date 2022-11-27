@@ -40,7 +40,7 @@
         hover
         :pagination="pagination"
         :selected-row-keys="selectedRowKeys"
-        :loading="dataLoading"
+        :loading="tableLoading"
         :header-affixed-top="{ offsetTop, container: getContainer }"
         :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
         :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
@@ -69,16 +69,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { MessagePlugin } from "tdesign-vue-next";
-import { getFormList } from "@/api/list";
 import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
 
 import { FORM_TABLE_COLUMNS } from "./constants";
 import { request } from "@/utils/request";
 import { setObjToUrlParams } from "@/utils/request/utils";
+import { MessagePlugin } from "tdesign-vue-next";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -90,7 +89,7 @@ const router = useRouter();
  * 表格相关
  */
 // 表格加载
-const dataLoading = ref(false);
+const tableLoading = ref(false);
 // 表格数据
 const formListTableData = ref([]);
 // 表格分页
@@ -125,12 +124,16 @@ const getContainer = () => {
 // 组件挂载完成后执行
 onMounted(() => {
   // 获取表格数据
-  const requestUrl = "/form/getFormPage";
-  getFormData(requestUrl);
+  initTableData();
 });
+// 初始化表格数据
+const initTableData = () => {
+  searchValue.value.currPage = 1;
+  getFormData("/form/getFormPage");
+};
 // 获取表格数据
 const getFormData = async (requestUrl) => {
-  dataLoading.value = true;
+  tableLoading.value = true;
   requestUrl = setObjToUrlParams(requestUrl, searchValue.value);
   request.post({
     url: requestUrl,
@@ -140,12 +143,12 @@ const getFormData = async (requestUrl) => {
     formListTableData.value = res.records;
     pagination.value.total = res.total;
     for (let i = 0; i < formListTableData.value.length; i++) {
-      formListTableData.value[i].index = pagination.value.current * i + i + 1;
+      formListTableData.value[i].index = (pagination.value.current - 1) * pagination.value.pageSize + i + 1;
     }
   }).catch(err => {
     console.log(err);
   }).finally(() => {
-    dataLoading.value = false;
+    tableLoading.value = false;
   });
 };
 // 查询征集表
@@ -174,6 +177,18 @@ const editForm = (row) => {
 // 删除
 const deleteForm = (row) => {
   console.log(row.id);
+  let obj = { id: row.id };
+  let requestUrl = setObjToUrlParams("/form/deleteForm", obj);
+  request.post({
+    url: requestUrl
+  }).then(res => {
+    console.log(res);
+    MessagePlugin.success(res);
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+    initTableData();
+  });
 };
 
 

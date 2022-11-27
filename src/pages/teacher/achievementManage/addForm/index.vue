@@ -1,9 +1,75 @@
 <template>
   <div>
-    <t-card class="list-card-container">
-      <t-row justify="space-between">
-
+    <!-- 搜索专利 -->
+    <t-card class="addForm-card-container">
+      <t-row justify="space-between" class="cardTop">
+        <div class="cardTitle">搜索专利</div>
+        <div>
+          <t-radio-group variant="primary-filled" v-model="searchValue.authorize">
+            <t-radio-button :value="true">已授权</t-radio-button>
+            <t-radio-button :value="false">未授权</t-radio-button>
+          </t-radio-group>
+        </div>
       </t-row>
+      <t-row justify="space-between" class="cardSearchArea">
+        <t-input v-model="searchValue.zlmc" placeholder="专利名称" style="width: 45%;"></t-input>
+        <t-input v-model="searchValue.cymd" placeholder="专利发明人" style="width: 45%;"></t-input>
+        <t-button theme="primary" style="width: 8%;" @click="get_choose_patents()">
+          <t-icon name="search"></t-icon>
+          搜索
+        </t-button>
+      </t-row>
+      <t-table
+        :data="formListTableData"
+        :columns="FORM_TABLE_COLUMNS"
+        row-key="id"
+        vertical-align="center"
+        hover
+        :pagination="pagination"
+        :selected-row-keys="selectedRowKeys"
+        :loading="tableLoading"
+        :header-affixed-top="{ offsetTop, container: getContainer }"
+        :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
+        :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
+        @page-change="rehandlePageChange"
+        @select-change="rehandleSelectChange"
+        style="margin-top: 10px"
+      >
+        <template #settings="slotProps">
+          <t-button theme="success" @click="getFormInfo(slotProps.row)">
+            <t-icon name="check"></t-icon>
+          </t-button>
+        </template>
+      </t-table>
+    </t-card>
+
+    <!-- 已选择专利 -->
+    <t-card class="addForm-card-container">
+      <t-row justify="space-between" class="cardTop">
+        <div class="cardTitle">已选择专利</div>
+      </t-row>
+      <t-table
+        :data="formListTableData"
+        :columns="FORM_TABLE_COLUMNS"
+        row-key="id"
+        vertical-align="center"
+        hover
+        :pagination="pagination"
+        :selected-row-keys="selectedRowKeys"
+        :loading="tableLoading"
+        :header-affixed-top="{ offsetTop, container: getContainer }"
+        :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
+        :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
+        @page-change="rehandlePageChange"
+        @select-change="rehandleSelectChange"
+        style="margin-top: 10px"
+      >
+        <template #settings="slotProps">
+          <t-button theme="danger" @click="getFormInfo(slotProps.row)">
+            <t-icon name="delete"></t-icon>
+          </t-button>
+        </template>
+      </t-table>
     </t-card>
   </div>
 </template>
@@ -15,6 +81,7 @@ import { useSettingStore } from "@/store";
 import { prefix } from "@/config/global";
 import { request } from "@/utils/request";
 import { setObjToUrlParams } from "@/utils/request/utils";
+import { FORM_TABLE_COLUMNS } from "./constants";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -32,13 +99,17 @@ const formListTableData = ref([]);
 // 表格分页
 const pagination = ref({
   total: 0,
-  pageSize: 20,
-  current: 1
+  pageSize: 5,
+  current: 1,
+  showPageSize: false
 });
 // 查询表格
 const searchValue = ref({
   currPage: pagination.value.current,
-  size: pagination.value.pageSize
+  size: pagination.value.pageSize,
+  authorize: true, // 是否授权
+  zlmc: "",// 专利名称
+  cymd: "" // 成员名单
   // achievementName: "", // 成果名称
   // achievementContactPerson: "", // 成果联系人
   // jobNumber: "" // 工号
@@ -76,7 +147,7 @@ const getFormData = async (requestUrl) => {
     formListTableData.value = res.records;
     pagination.value.total = res.total;
     for (let i = 0; i < formListTableData.value.length; i++) {
-      formListTableData.value[i].index = pagination.value.current * i + i + 1;
+      formListTableData.value[i].index = (pagination.value.current - 1) * pagination.value.pageSize + i + 1;
     }
   }).catch(err => {
     console.log(err);
@@ -134,24 +205,26 @@ const rehandlePageChange = (curr) => {
 </script>
 
 <style lang="less" scoped>
-.payment-col {
-  display: flex;
 
-  .trend-container {
-    display: flex;
+.addForm-card-container {
+  &:nth-child(2) {
+    margin-top: 10px;
+  }
+
+  .cardTop {
+    //border: 1px solid red;
     align-items: center;
-    margin-left: 8px;
-  }
-}
 
-.left-operation-container {
-  padding-top: 6px;
-
-  .selected-count {
-    display: inline-block;
-    margin-left: 8px;
-    color: var(--td-text-color-secondary);
+    .cardTitle {
+      font-size: 20px;
+      font-weight: bold;
+    }
   }
+
+  .cardSearchArea {
+    margin-top: 10px;
+  }
+
 }
 
 .search-input {
