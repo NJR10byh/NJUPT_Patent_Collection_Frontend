@@ -343,7 +343,10 @@ const onSubmit = ({ validateResult, firstError, e }) => {
     let requestUrl = "/form/addForm";
     formInfo.value = {
       ...formInfo.value,
-      achievementIntroduce: formInfo.value.achievementIntroduce.replace(/\n/g, "&#10;")
+      technicalClassification: formInfo.value.technicalClassification.replace(/\n/g, "&#10;"),
+      achievementIntroduce: formInfo.value.achievementIntroduce.replace(/\n/g, "&#10;"),
+      keyTechnologies: formInfo.value.keyTechnologies.replace(/\n/g, "&#10;"),
+      fieldMarket: formInfo.value.fieldMarket.replace(/\n/g, "&#10;")
     };
     request.post({
       url: requestUrl,

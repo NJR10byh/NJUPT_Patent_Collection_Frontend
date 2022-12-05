@@ -22,9 +22,75 @@ export const FORM_TABLE_COLUMNS = [
     ellipsis: true
   },
   {
+    title: "职称",
+    colKey: "jobTitle",
+    width: 150,
+    ellipsis: true
+  },
+  {
+    title: "电话",
+    colKey: "achievementContactPhone",
+    width: 150,
+    ellipsis: true
+  },
+  {
+    title: "Email",
+    colKey: "achievementContactEmail",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "所在学院",
+    colKey: "department",
+    width: 200,
+    ellipsis: true
+  },
+  {
     title: "工号",
     colKey: "jobNumber",
     width: 150,
+    ellipsis: true
+  },
+  {
+    title: "技术成熟度",
+    colKey: "technicalMaturity",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "技术分类",
+    colKey: "technicalClassification",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "成果介绍",
+    colKey: "achievementIntroduce",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "关键技术",
+    colKey: "keyTechnologies",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "应用领域和市场",
+    colKey: "fieldMarket",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "成果估值金额",
+    colKey: "achievementPrice",
+    width: 200,
+    ellipsis: true
+  },
+  {
+    title: "转化方式",
+    colKey: "transformWay",
+    width: 200,
     ellipsis: true
   },
   {
