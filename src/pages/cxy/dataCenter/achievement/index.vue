@@ -10,19 +10,19 @@
         <div class="search-input">
           <t-input
             class="searchInputStyle"
-            v-model="searchValue.achievementName"
+            v-model="searchValue.searchCondition.achievementName"
             placeholder="成果名称"
             clearable
           ></t-input>
           <t-input
             class="searchInputStyle"
-            v-model="searchValue.achievementContactPerson"
+            v-model="searchValue.searchCondition.achievementContactPerson"
             placeholder="成果联系人"
             clearable
           ></t-input>
           <t-input
             class="searchInputStyle"
-            v-model="searchValue.jobNumber"
+            v-model="searchValue.searchCondition.jobNumber"
             placeholder="工号"
             clearable
           ></t-input>
@@ -99,16 +99,18 @@ const formListTableData = ref([]);
 // 表格分页
 const pagination = ref({
   total: 0,
-  pageSize: 20,
-  current: 1
+  current: 1,
+  pageSize: 20
 });
 // 查询表格
 const searchValue = ref({
-  currPage: pagination.value.current,
-  size: pagination.value.pageSize
-  // achievementName: "", // 成果名称
-  // achievementContactPerson: "", // 成果联系人
-  // jobNumber: "" // 工号
+  currPage: 1,
+  size: 20,
+  searchCondition: {
+    achievementName: "", // 成果名称
+    achievementContactPerson: "", // 成果联系人
+    jobNumber: "" // 工号
+  }
 });
 // 是否允许点击表格行时展开
 const expandOnRowClick = ref(true);
@@ -178,12 +180,11 @@ onMounted(() => {
 // 初始化表格数据
 const initTableData = () => {
   searchValue.value.currPage = 1;
-  getFormData("/form/getFormPage");
+  getFormData("/form/getFormPageByCondition");
 };
 // 获取表格数据
 const getFormData = async (requestUrl) => {
   tableLoading.value = true;
-  requestUrl = setObjToUrlParams(requestUrl, searchValue.value);
   request.post({
     url: requestUrl,
     data: searchValue.value
@@ -202,7 +203,7 @@ const getFormData = async (requestUrl) => {
 };
 // 查询征集表
 const searchForm = () => {
-  const requestUrl = "/form/getFormPage";
+  const requestUrl = "/form/getFormPageByCondition";
   searchValue.value.currPage = 1;
   searchValue.value.size = 20;
   getFormData(requestUrl);
@@ -257,7 +258,7 @@ const rehandleExpandChange = (value, params) => {
 // 分页钩子
 const rehandlePageChange = (curr) => {
   console.log("分页变化", curr);
-  const requestUrl = "/form/getFormPage";
+  const requestUrl = "/form/getFormPageByCondition";
   searchValue.value.currPage = curr.current;
   searchValue.value.size = curr.pageSize;
   pagination.value.current = curr.current;
@@ -294,10 +295,15 @@ const rehandlePageChange = (curr) => {
   .searchInputStyle,
   .searchBtnStyle {
     margin-left: 8px;
+    //border: 1px solid red;
+  }
+
+  .searchInputStyle {
+    width: 200px;
   }
 
   .searchBtnStyle {
-    width: 180px;
+    width: 80px;
   }
 }
 </style>

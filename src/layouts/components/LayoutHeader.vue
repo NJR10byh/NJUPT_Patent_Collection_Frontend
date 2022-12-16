@@ -11,20 +11,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { usePermissionStore, useSettingStore } from '@/store';
-import LHeader from './Header.vue';
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { usePermissionStore, useSettingStore } from "@/store";
+import LHeader from "./Header.vue";
 
 const permissionStore = usePermissionStore();
 const settingStore = useSettingStore();
 const { routers: menuRouters } = storeToRefs(permissionStore);
 const headerMenu = computed(() => {
-  if (settingStore.layout === 'mix') {
+  if (settingStore.layout === "mix") {
     if (settingStore.splitMenu) {
       return menuRouters.value.map((menu) => ({
         ...menu,
-        children: [],
+        children: []
       }));
     }
     return [];

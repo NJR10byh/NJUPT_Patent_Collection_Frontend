@@ -1,20 +1,20 @@
-import { defineStore } from 'pinia';
-import { TOKEN_NAME } from '@/config/global';
-import { store, usePermissionStore } from '@/store';
+import { defineStore } from "pinia";
+import { TOKEN_NAME } from "@/config/global";
+import { store, usePermissionStore } from "@/store";
 
 const InitUserInfo = {
-  roles: [],
+  roles: []
 };
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
-    token: localStorage.getItem(TOKEN_NAME) || 'main_token', // 默认token不走权限
-    userInfo: InitUserInfo,
+    token: localStorage.getItem(TOKEN_NAME) || "main_token", // 默认token不走权限
+    userInfo: InitUserInfo
   }),
   getters: {
     roles: (state) => {
       return state.userInfo?.roles;
-    },
+    }
   },
   actions: {
     async login(userInfo: Record<string, unknown>) {
@@ -40,29 +40,24 @@ export const useUserStore = defineStore('user', {
         // }[password];
         return {
           code: 200,
-          message: '登陆成功',
-          data: 'main_token',
+          message: "登录成功"
         };
       };
 
       const res = await mockLogin(userInfo);
-      if (res.code === 200) {
-        this.token = res.data;
-      } else {
-        throw res;
-      }
+      console.log(res);
     },
     async getUserInfo() {
       const mockRemoteUserInfo = async (token: string) => {
-        if (token === 'main_token') {
+        if (token === "main_token") {
           return {
-            name: 'td_main',
-            roles: ['all'],
+            name: "td_main",
+            roles: ["all"]
           };
         }
         return {
-          name: 'td_dev',
-          roles: ['UserIndex', 'DashboardBase', 'login'],
+          name: "td_dev",
+          roles: ["UserIndex", "DashboardBase", "login"]
         };
       };
 
@@ -72,12 +67,12 @@ export const useUserStore = defineStore('user', {
     },
     async logout() {
       localStorage.removeItem(TOKEN_NAME);
-      this.token = '';
+      this.token = "";
       this.userInfo = InitUserInfo;
     },
     async removeToken() {
-      this.token = '';
-    },
+      this.token = "";
+    }
   },
   persist: {
     afterRestore: (ctx) => {
@@ -85,8 +80,8 @@ export const useUserStore = defineStore('user', {
         const permissionStore = usePermissionStore();
         permissionStore.initRoutes(ctx.store.roles);
       }
-    },
-  },
+    }
+  }
 });
 
 export function getUserStore() {

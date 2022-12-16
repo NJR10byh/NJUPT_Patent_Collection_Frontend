@@ -1,22 +1,23 @@
 <template>
   <header class="login-header">
-    <logo-full-icon class="logo" />
-    <div class="operations-container">
-      <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
-        <t-icon name="logo-github" class="icon" />
-      </t-button>
-      <t-button theme="default" shape="square" variant="text" @click="navToHelper">
-        <t-icon name="help-circle" class="icon" />
-      </t-button>
-      <t-button theme="default" shape="square" variant="text" @click="toggleSettingPanel">
-        <t-icon name="setting" class="icon" />
-      </t-button>
-    </div>
+    <span class="header-logo-container">
+        <img src="@/assets/assets-njupt-logo.png" class="logo" />
+     </span>
+    <!--    <div class="operations-container">-->
+    <!--      <t-button theme="default" shape="square" variant="text" @click="navToGitHub">-->
+    <!--        <t-icon name="logo-github" class="icon" />-->
+    <!--      </t-button>-->
+    <!--      <t-button theme="default" shape="square" variant="text" @click="navToHelper">-->
+    <!--        <t-icon name="help-circle" class="icon" />-->
+    <!--      </t-button>-->
+    <!--      <t-button theme="default" shape="square" variant="text" @click="toggleSettingPanel">-->
+    <!--        <t-icon name="setting" class="icon" />-->
+    <!--      </t-button>-->
+    <!--    </div>-->
   </header>
 </template>
 
 <script setup lang="ts">
-import LogoFullIcon from "@/assets/assets-logo-full.svg?component";
 import { useSettingStore } from "@/store";
 
 const settingStore = useSettingStore();
@@ -46,9 +47,17 @@ const navToHelper = () => {
   backdrop-filter: blur(5px);
   color: var(--td-text-color-primary);
 
-  .logo {
-    width: 188px;
-    height: 64px;
+  .header-logo-container {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    color: var(--td-text-color-primary);
+    //border: 1px solid red;
+
+    .logo {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .operations-container {

@@ -3,10 +3,10 @@
     <t-col :flex="3">
       <div class="user-left-greeting">
         <div>
-          Hi，Image
-          <span class="regular"> 下午好，今天是你加入鹅厂的第 100 天～</span>
+          Hi，南京邮电大学
+          <span class="regular"> 下午好～</span>
         </div>
-        <img src="@/assets/assets-tencent-logo.png" class="logo" />
+        <img src="@/assets/assets-njupt-logo.png" class="logo" />
       </div>
 
       <t-card class="user-info-list" title="个人信息">
@@ -90,25 +90,25 @@
 </template>
 <script lang="ts">
 export default {
-  name: 'UserIndex',
+  name: "UserIndex"
 };
 </script>
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, watch, computed } from 'vue';
-import * as echarts from 'echarts/core';
-import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
-import { LineChart } from 'echarts/charts';
-import { CanvasRenderer } from 'echarts/renderers';
-import { useSettingStore } from '@/store';
+import { nextTick, onMounted, onUnmounted, watch, computed } from "vue";
+import * as echarts from "echarts/core";
+import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
+import { LineChart } from "echarts/charts";
+import { CanvasRenderer } from "echarts/renderers";
+import { useSettingStore } from "@/store";
 
-import { LAST_7_DAYS } from '@/utils/date';
-import { USER_INFO_LIST, TEAM_MEMBERS, PRODUCT_LIST } from './constants';
-import { getFolderLineDataSet } from './index';
-import ProductAIcon from '@/assets/assets-product-1.svg';
-import ProductBIcon from '@/assets/assets-product-2.svg';
-import ProductCIcon from '@/assets/assets-product-3.svg';
-import ProductDIcon from '@/assets/assets-product-4.svg';
-import { changeChartsTheme } from '@/utils/color';
+import { LAST_7_DAYS } from "@/utils/date";
+import { USER_INFO_LIST, TEAM_MEMBERS, PRODUCT_LIST } from "./constants";
+import { getFolderLineDataSet } from "./index";
+import ProductAIcon from "@/assets/assets-product-1.svg";
+import ProductBIcon from "@/assets/assets-product-2.svg";
+import ProductCIcon from "@/assets/assets-product-3.svg";
+import ProductDIcon from "@/assets/assets-product-4.svg";
+import { changeChartsTheme } from "@/utils/color";
 
 echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
 
@@ -122,23 +122,23 @@ const onLineChange = (value) => {
 };
 
 const initChart = () => {
-  lineContainer = document.getElementById('lineContainer');
+  lineContainer = document.getElementById("lineContainer");
   lineChart = echarts.init(lineContainer);
   lineChart.setOption({
     grid: {
       x: 30, // 默认是80px
       y: 30, // 默认是60px
       x2: 10, // 默认80px
-      y2: 30, // 默认60px
+      y2: 30 // 默认60px
     },
-    ...getFolderLineDataSet({ ...chartColors.value }),
+    ...getFolderLineDataSet({ ...chartColors.value })
   });
 };
 
 const updateContainer = () => {
   lineChart?.resize({
     width: lineContainer.clientWidth,
-    height: lineContainer.clientHeight,
+    height: lineContainer.clientHeight
   });
 };
 
@@ -146,22 +146,22 @@ onMounted(() => {
   nextTick(() => {
     initChart();
   });
-  window.addEventListener('resize', updateContainer, false);
+  window.addEventListener("resize", updateContainer, false);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('resize', updateContainer);
+  window.removeEventListener("resize", updateContainer);
 });
 
 const getIcon = (type) => {
   switch (type) {
-    case 'a':
+    case "a":
       return ProductAIcon;
-    case 'b':
+    case "b":
       return ProductBIcon;
-    case 'c':
+    case "c":
       return ProductCIcon;
-    case 'd':
+    case "d":
       return ProductDIcon;
     default:
       return ProductAIcon;
@@ -172,7 +172,7 @@ watch(
   () => store.brandTheme,
   () => {
     changeChartsTheme([lineChart]);
-  },
+  }
 );
 </script>
 

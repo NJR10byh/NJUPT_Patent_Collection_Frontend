@@ -1,22 +1,10 @@
 <template>
   <div class="login-wrapper">
     <login-header />
-
     <div class="login-container">
       <div class="title-container">
         <h1 class="title margin-no">登录到</h1>
-        <h1 class="title">TDesign Starter</h1>
-        <div class="sub-title">
-          <p class="tip">
-            {{ type == "register" ? "已有账号?" : "没有账号吗?" }}
-          </p>
-          <p
-            class="tip"
-            @click="switchType(type == 'register' ? 'login' : 'register')"
-          >
-            {{ type == "register" ? "登录" : "注册新账号" }}
-          </p>
-        </div>
+        <h1 class="title">南京邮电大学 成果征集系统</h1>
       </div>
 
       <login v-if="type === 'login'" />
@@ -31,7 +19,7 @@
 </template>
 <script lang="ts">
 export default {
-  name: "LoginIndex",
+  name: "LoginIndex"
 };
 </script>
 <script setup lang="ts">

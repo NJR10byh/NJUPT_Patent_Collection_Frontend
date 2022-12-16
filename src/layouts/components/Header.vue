@@ -8,12 +8,8 @@
       style="z-index: 999"
     >
       <template #logo>
-        <span
-          v-if="showLogo"
-          class="header-logo-container"
-          @click="handleNav('/dashboard/achievement')"
-        >
-          <logo-full class="t-logo" />
+        <span v-if="showLogo" class="header-logo-container">
+          <img src="@/assets/assets-njupt-logo.png" class="logo" />
         </span>
         <div v-else class="header-operate-left">
           <t-button
@@ -24,7 +20,7 @@
           >
             <t-icon class="collapsed-icon" name="view-list" />
           </t-button>
-          <search :layout="layout" />
+          <!--          <search :layout="layout" />-->
         </div>
       </template>
       <menu-content
@@ -35,37 +31,37 @@
       <template #operations>
         <div class="operations-container">
           <!-- 搜索框 -->
-          <search v-if="layout !== 'side'" :layout="layout" />
+          <!--          <search v-if="layout !== 'side'" :layout="layout" />-->
 
           <!-- 全局通知 -->
-          <notice />
+          <!--          <notice />-->
 
-          <t-tooltip placement="bottom" content="代码仓库">
-            <t-button
-              theme="default"
-              shape="square"
-              variant="text"
-              @click="navToGitHub"
-            >
-              <t-icon name="logo-github" />
-            </t-button>
-          </t-tooltip>
-          <t-tooltip placement="bottom" content="帮助文档">
-            <t-button
-              theme="default"
-              shape="square"
-              variant="text"
-              @click="navToHelper"
-            >
-              <t-icon name="help-circle" />
-            </t-button>
-          </t-tooltip>
+          <!--          <t-tooltip placement="bottom" content="代码仓库">-->
+          <!--            <t-button-->
+          <!--              theme="default"-->
+          <!--              shape="square"-->
+          <!--              variant="text"-->
+          <!--              @click="navToGitHub"-->
+          <!--            >-->
+          <!--              <t-icon name="logo-github" />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
+          <!--          <t-tooltip placement="bottom" content="帮助文档">-->
+          <!--            <t-button-->
+          <!--              theme="default"-->
+          <!--              shape="square"-->
+          <!--              variant="text"-->
+          <!--              @click="navToHelper"-->
+          <!--            >-->
+          <!--              <t-icon name="help-circle" />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
           <t-dropdown :min-column-width="135" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
                 <t-dropdown-item
                   class="operations-dropdown-container-item"
-                  @click="handleNav('/user/index')"
+                  @click="toUser('/user/index')"
                 >
                   <t-icon name="user-circle"></t-icon>
                   个人中心
@@ -89,16 +85,16 @@
               </div>
             </t-button>
           </t-dropdown>
-          <t-tooltip placement="bottom" content="系统设置">
-            <t-button
-              theme="default"
-              shape="square"
-              variant="text"
-              @click="toggleSettingPanel"
-            >
-              <t-icon name="setting" />
-            </t-button>
-          </t-tooltip>
+          <!--          <t-tooltip placement="bottom" content="系统设置">-->
+          <!--            <t-button-->
+          <!--              theme="default"-->
+          <!--              shape="square"-->
+          <!--              variant="text"-->
+          <!--              @click="toggleSettingPanel"-->
+          <!--            >-->
+          <!--              <t-icon name="setting" />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
         </div>
       </template>
     </t-head-menu>
@@ -106,47 +102,43 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed } from "vue";
+import { computed, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { useSettingStore } from "@/store";
 import { getActive } from "@/router";
 import { prefix } from "@/config/global";
-import LogoFull from "@/assets/assets-logo-full.svg?component";
 import { MenuRoute } from "@/types/interface";
-
-import Notice from "./Notice.vue";
-import Search from "./Search.vue";
 import MenuContent from "./MenuContent.vue";
 
 const props = defineProps({
   theme: {
     type: String,
-    default: "",
+    default: ""
   },
   layout: {
     type: String,
-    default: "top",
+    default: "top"
   },
   showLogo: {
     type: Boolean,
-    default: true,
+    default: true
   },
   menu: {
     type: Array as PropType<MenuRoute[]>,
-    default: () => [],
+    default: () => []
   },
   isFixed: {
     type: Boolean,
-    default: false,
+    default: false
   },
   isCompact: {
     type: Boolean,
-    default: false,
+    default: false
   },
   maxLevel: {
     type: Number,
-    default: 3,
-  },
+    default: 3
+  }
 });
 
 const router = useRouter();
@@ -154,8 +146,12 @@ const settingStore = useSettingStore();
 
 const toggleSettingPanel = () => {
   settingStore.updateConfig({
-    showSettingPanel: true,
+    showSettingPanel: true
   });
+};
+
+const toUser = (url) => {
+  router.push(url);
 };
 
 const active = computed(() => getActive());
@@ -170,23 +166,19 @@ const menuCls = computed(() => {
       [`${prefix}-header-menu-fixed`]: isFixed,
       [`${prefix}-header-menu-fixed-side`]: layout === "side" && isFixed,
       [`${prefix}-header-menu-fixed-side-compact`]:
-        layout === "side" && isFixed && isCompact,
-    },
+      layout === "side" && isFixed && isCompact
+    }
   ];
 });
 
 const changeCollapsed = () => {
   settingStore.updateConfig({
-    isSidebarCompact: !settingStore.isSidebarCompact,
+    isSidebarCompact: !settingStore.isSidebarCompact
   });
 };
 
-const handleNav = (url) => {
-  router.push(url);
-};
-
 const handleLogout = () => {
-  router.push(`/login?redirect=${router.currentRoute.value.fullPath}`);
+  router.push("/login");
 };
 
 const navToGitHub = () => {
@@ -278,23 +270,16 @@ const navToHelper = () => {
 }
 
 .header-logo-container {
-  width: 184px;
-  height: 26px;
+  width: 180px;
+  height: 45px;
   display: flex;
-  margin-left: 24px;
+  margin-left: 20px;
   color: var(--td-text-color-primary);
+  //border: 1px solid red;
 
-  .t-logo {
+  .logo {
     width: 100%;
     height: 100%;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &:hover {
-    cursor: pointer;
   }
 }
 
