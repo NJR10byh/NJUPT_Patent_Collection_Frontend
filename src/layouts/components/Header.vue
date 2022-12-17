@@ -23,11 +23,11 @@
           <!--          <search :layout="layout" />-->
         </div>
       </template>
-      <menu-content
-        v-show="layout !== 'side'"
-        class="header-menu"
-        :nav-data="menu"
-      />
+      <!--      <menu-content-->
+      <!--        v-show="layout !== 'side'"-->
+      <!--        class="header-menu"-->
+      <!--        :nav-data="menu"-->
+      <!--      />-->
       <template #operations>
         <div class="operations-container">
           <!-- 搜索框 -->
@@ -85,16 +85,16 @@
               </div>
             </t-button>
           </t-dropdown>
-          <t-tooltip placement="bottom" content="系统设置">
-            <t-button
-              theme="default"
-              shape="square"
-              variant="text"
-              @click="toggleSettingPanel"
-            >
-              <t-icon name="setting" />
-            </t-button>
-          </t-tooltip>
+          <!--          <t-tooltip placement="bottom" content="系统设置">-->
+          <!--            <t-button-->
+          <!--              theme="default"-->
+          <!--              shape="square"-->
+          <!--              variant="text"-->
+          <!--              @click="toggleSettingPanel"-->
+          <!--            >-->
+          <!--              <t-icon name="setting" />-->
+          <!--            </t-button>-->
+          <!--          </t-tooltip>-->
         </div>
       </template>
     </t-head-menu>
@@ -108,7 +108,6 @@ import { useSettingStore, useUserStore } from "@/store";
 import { getActive } from "@/router";
 import { prefix } from "@/config/global";
 import { MenuRoute } from "@/types/interface";
-import MenuContent from "./MenuContent.vue";
 
 const props = defineProps({
   theme: {
@@ -224,15 +223,15 @@ const navToHelper = () => {
   }
 }
 
-.header-menu {
-  flex: 1 1 1;
-  display: inline-flex;
-
-  :deep(.t-menu__item) {
-    min-width: unset;
-    padding: 0px 16px;
-  }
-}
+//.header-menu {
+//  flex: 1 1 1;
+//  display: inline-flex;
+//
+//  :deep(.t-menu__item) {
+//    min-width: unset;
+//    padding: 0px 16px;
+//  }
+//}
 
 .operations-container {
   display: flex;

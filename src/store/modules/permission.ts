@@ -40,23 +40,22 @@ export const usePermissionStore = defineStore("permission", {
       let accessedRouters = [];// 允许访问的
       let removeRoutes = []; // 移除的
       // special token
-      // if (role == "root") {
-      //   accessedRouters = asyncRouterList;
-      // } else {
-      //
-      // }
-      const res = filterPermissionsRouters(asyncRouterList, role);
-      console.log(res);
-      accessedRouters = res.accessedRouters;
-      removeRoutes = res.removeRoutes;
-      this.routers = accessedRouters;
-      this.removeRoutes = removeRoutes;
+      if (role == "root") {
+        accessedRouters = asyncRouterList;
+      } else {
+        const res = filterPermissionsRouters(asyncRouterList, role);
+        console.log(res);
+        accessedRouters = res.accessedRouters;
+        removeRoutes = res.removeRoutes;
+        this.routers = accessedRouters;
+        this.removeRoutes = removeRoutes;
 
-      removeRoutes.forEach((item: RouteRecordRaw) => {
-        if (router.hasRoute(item.name)) {
-          router.removeRoute(item.name);
-        }
-      });
+        removeRoutes.forEach((item: RouteRecordRaw) => {
+          if (router.hasRoute(item.name)) {
+            router.removeRoute(item.name);
+          }
+        });
+      }
     },
     async restore() {
       this.removeRoutes.forEach((item: RouteRecordRaw) => {
