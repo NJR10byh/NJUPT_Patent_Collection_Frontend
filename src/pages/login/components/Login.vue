@@ -12,7 +12,7 @@
         <t-input
           v-model="loginData.username"
           size="large"
-          placeholder="请输入账号：admin"
+          placeholder="请输入账号：cxy/teacher"
         >
           <template #prefix-icon>
             <t-icon name="user" />
@@ -26,7 +26,7 @@
           size="large"
           :type="showPsw ? 'text' : 'password'"
           clearable
-          placeholder="请输入登录密码：admin"
+          placeholder="请输入登录密码：abc123123"
         >
           <template #prefix-icon>
             <t-icon name="lock-on" />
