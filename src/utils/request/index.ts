@@ -5,7 +5,6 @@ import type { AxiosTransform, CreateAxiosOptions } from "./AxiosTransform";
 import { VAxios } from "./Axios";
 import proxy from "@/config/proxy";
 import { formatRequestDate, joinTimestamp, setObjToUrlParams } from "./utils";
-import { TOKEN_NAME } from "@/config/global";
 
 const env = import.meta.env.MODE || "development";
 
@@ -108,17 +107,17 @@ const transform: AxiosTransform = {
   },
 
   // 请求拦截器处理
-  requestInterceptors: (config, options) => {
-    // 请求之前处理config
-    const token = localStorage.getItem(TOKEN_NAME);
-    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
-      // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
-        ? `${options.authenticationScheme} ${token}`
-        : token;
-    }
-    return config;
-  },
+  // requestInterceptors: (config, options) => {
+  //   // 请求之前处理config
+  //   const token = localStorage.getItem(TOKEN_NAME);
+  //   if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+  //     // jwt token
+  //     (config as Recordable).headers.Authorization = options.authenticationScheme
+  //       ? `${options.authenticationScheme} ${token}`
+  //       : token;
+  //   }
+  //   return config;
+  // },
 
   // 响应拦截器处理
   responseInterceptors: (res) => {
@@ -187,7 +186,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 忽略重复请求
           ignoreRepeatRequest: true,
           // 是否携带token
-          withToken: true,
+          withToken: false,
           // 重试
           retry: {
             count: 3,

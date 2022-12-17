@@ -61,7 +61,7 @@
               <t-dropdown-menu>
                 <t-dropdown-item
                   class="operations-dropdown-container-item"
-                  @click="toUser('/user/index')"
+                  @click="toUser('/userCenter/info')"
                 >
                   <t-icon name="user-circle"></t-icon>
                   个人中心
@@ -80,21 +80,21 @@
                 <t-icon class="header-user-avatar" name="user-circle" />
               </template>
               <div class="header-user-account">
-                南京邮电大学
+                {{ userStore.userInfo.name }}
                 <t-icon name="chevron-down" />
               </div>
             </t-button>
           </t-dropdown>
-          <!--          <t-tooltip placement="bottom" content="系统设置">-->
-          <!--            <t-button-->
-          <!--              theme="default"-->
-          <!--              shape="square"-->
-          <!--              variant="text"-->
-          <!--              @click="toggleSettingPanel"-->
-          <!--            >-->
-          <!--              <t-icon name="setting" />-->
-          <!--            </t-button>-->
-          <!--          </t-tooltip>-->
+          <t-tooltip placement="bottom" content="系统设置">
+            <t-button
+              theme="default"
+              shape="square"
+              variant="text"
+              @click="toggleSettingPanel"
+            >
+              <t-icon name="setting" />
+            </t-button>
+          </t-tooltip>
         </div>
       </template>
     </t-head-menu>
@@ -104,7 +104,7 @@
 <script setup lang="ts">
 import { computed, PropType } from "vue";
 import { useRouter } from "vue-router";
-import { useSettingStore } from "@/store";
+import { useSettingStore, useUserStore } from "@/store";
 import { getActive } from "@/router";
 import { prefix } from "@/config/global";
 import { MenuRoute } from "@/types/interface";
@@ -143,6 +143,8 @@ const props = defineProps({
 
 const router = useRouter();
 const settingStore = useSettingStore();
+const userStore = useUserStore();
+
 
 const toggleSettingPanel = () => {
   settingStore.updateConfig({
@@ -177,8 +179,10 @@ const changeCollapsed = () => {
   });
 };
 
-const handleLogout = () => {
-  router.push("/login");
+const handleLogout = async () => {
+  await userStore.logout();
+  await router.push("/login");
+  window.location.reload();
 };
 
 const navToGitHub = () => {

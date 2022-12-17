@@ -44,7 +44,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
       port: 8907,
       host: "localhost",
       proxy: {
-        // "/form": "http://localhost:8089", // 本地环境
+        // "/collection_dev": "http://localhost:8089" // 本地环境
         "/collection_dev": "http://cgzh.njupt.edu.cn:8080" // 开发环境
       }
     }

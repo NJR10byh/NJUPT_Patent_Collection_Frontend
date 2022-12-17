@@ -1,4 +1,4 @@
-import { useRoute, createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, RouteRecordRaw, useRoute } from "vue-router";
 import uniq from "lodash/uniq";
 
 // 自动导入modules文件夹下所有ts文件
@@ -12,11 +12,14 @@ Object.keys(modules).forEach((key) => {
   const modList = Array.isArray(mod) ? [...mod] : [mod];
   routeModuleList.push(...modList);
 });
+// console.log(routeModuleList);
 
 // 关于单层路由，meta 中设置 { single: true } 即可为单层路由，{ hidden: true } 即可在侧边栏隐藏该路由
 
 // 存放动态路由
 export const asyncRouterList: Array<RouteRecordRaw> = [...routeModuleList];
+
+console.log(asyncRouterList);
 
 // 存放固定的路由
 const defaultRouterList: Array<RouteRecordRaw> = [

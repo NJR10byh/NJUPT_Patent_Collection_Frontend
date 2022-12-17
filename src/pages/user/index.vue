@@ -3,7 +3,7 @@
     <t-col :flex="3">
       <div class="user-left-greeting">
         <div>
-          Hi，南京邮电大学
+          Hi，{{ userStore.userInfo.name }}
           <span class="regular"> 下午好～</span>
         </div>
         <img src="@/assets/assets-njupt-logo.png" class="logo" />
@@ -99,7 +99,7 @@ import * as echarts from "echarts/core";
 import { GridComponent, TooltipComponent, LegendComponent } from "echarts/components";
 import { LineChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
-import { useSettingStore } from "@/store";
+import { useSettingStore, useUserStore } from "@/store";
 
 import { LAST_7_DAYS } from "@/utils/date";
 import { USER_INFO_LIST, TEAM_MEMBERS, PRODUCT_LIST } from "./constants";
@@ -115,6 +115,7 @@ echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendC
 let lineContainer: HTMLElement;
 let lineChart: echarts.ECharts;
 const store = useSettingStore();
+const userStore = useUserStore();
 const chartColors = computed(() => store.chartColors);
 
 const onLineChange = (value) => {

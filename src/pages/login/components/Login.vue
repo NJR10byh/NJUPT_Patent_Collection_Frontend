@@ -42,7 +42,7 @@
     </template>
 
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
-      <t-button block size="large" type="submit"> 登录</t-button>
+      <t-button block size="large" type="submit" :loading="loginBtnLoading">登 录</t-button>
     </t-form-item>
   </t-form>
 </template>
@@ -51,58 +51,61 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { FormInstanceFunctions, MessagePlugin } from "tdesign-vue-next";
-import { useCounter } from "@/hooks";
-import { useUserStore } from "@/store";
+import { usePermissionStore, useUserStore } from "@/store";
+import { request } from "@/utils/request";
+import { checkAuth } from "@/utils/auth";
 
 const userStore = useUserStore();
+const permissionStore = usePermissionStore();
 
 const FORM_RULES = {
-  phone: [{ required: true, message: "手机号必填", type: "error" }],
   username: [{ required: true, message: "账号必填", type: "error" }],
-  password: [{ required: true, message: "密码必填", type: "error" }],
-  verifyCode: [{ required: true, message: "验证码必填", type: "error" }]
+  password: [{ required: true, message: "密码必填", type: "error" }]
 };
 
 const type = ref("password");
 
 const form = ref<FormInstanceFunctions>();
 const loginData = ref({
-  username: "root",
+  username: "cxy",
   password: "abc123123"
 });
 const showPsw = ref(false);
 
-const [countDown, handleCounter] = useCounter();
-
-const switchType = (val: string) => {
-  type.value = val;
-};
-
+const loginBtnLoading = ref(false);
 const router = useRouter();
-
-/**
- * 发送验证码
- */
-const sendCode = () => {
-  form.value.validate({ fields: ["phone"] }).then((e) => {
-    if (e === true) {
-      handleCounter();
-    }
-  });
-};
 
 const onSubmit = async ({ validateResult }) => {
   if (validateResult === true) {
-    try {
-      await userStore.login(loginData.value);
-      //
-      // MessagePlugin.success("登录成功");
-      // router.push({
-      //   path: "/dataCenter/achievement"
-      // });
-    } catch (e) {
-      console.log(e);
-      MessagePlugin.error(e.message);
+    loginBtnLoading.value = true;
+    if (!await checkAuth()) {
+      let requestUrl = "/login/loginByAccount";
+      await request.post({
+        url: requestUrl,
+        data: loginData.value
+      }).then(async res => {
+        console.log(res);
+        userStore.getUserInfo(res);
+        await permissionStore.initRoutes(res.role);
+        MessagePlugin.success("欢迎您，" + res.name);
+      }).catch(err => {
+        console.log(err);
+        MessagePlugin.error(err.message);
+      }).finally(() => {
+        loginBtnLoading.value = false;
+      });
+    }
+    // console.log(userStore.role);
+    switch (userStore.role) {
+      case "root":
+        router.push("/dataCenter/achievement");
+        break;
+      case "cxy":
+        router.push("/dataCenter/achievement");
+        break;
+      case "teacher":
+        router.push("/achievementManage/addForm");
+        break;
     }
   }
 };

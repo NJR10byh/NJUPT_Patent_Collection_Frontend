@@ -1,16 +1,21 @@
-import { defineStore } from 'pinia';
-import { RouteRecordRaw } from 'vue-router';
-import router, { asyncRouterList } from '@/router';
-import { store } from '@/store';
+import { defineStore } from "pinia";
+import { RouteRecordRaw } from "vue-router";
+import router, { asyncRouterList } from "@/router";
+import { store } from "@/store";
 
-function filterPermissionsRouters(routes: Array<RouteRecordRaw>, roles: Array<unknown>) {
+function filterPermissionsRouters(routes: Array<RouteRecordRaw>, role: String) {
   const res = [];
-  const removeRoutes = [];
+  let children = [];
+  let removeRoutes = [];
   routes.forEach((route) => {
-    const children = [];
+    /**
+     * 每次foreach新的route，需要将鉴权通过的孩子数组初始化
+     */
+    children = [];
     route.children?.forEach((childRouter) => {
-      const roleCode = childRouter.meta?.roleCode || childRouter.name;
-      if (roles.indexOf(roleCode) !== -1) {
+      const rolePermission = childRouter.meta?.rolePermission || childRouter.name;
+      // @ts-ignore
+      if (rolePermission.indexOf(role) !== -1) {
         children.push(childRouter);
       } else {
         removeRoutes.push(childRouter);
@@ -24,26 +29,26 @@ function filterPermissionsRouters(routes: Array<RouteRecordRaw>, roles: Array<un
   return { accessedRouters: res, removeRoutes };
 }
 
-export const usePermissionStore = defineStore('permission', {
+export const usePermissionStore = defineStore("permission", {
   state: () => ({
-    whiteListRouters: ['/login'],
+    whiteListRouters: ["/login"],
     routers: [],
-    removeRoutes: [],
+    removeRoutes: []
   }),
   actions: {
-    async initRoutes(roles: Array<unknown>) {
-      let accessedRouters = [];
-
-      let removeRoutes = [];
+    async initRoutes(role) {
+      let accessedRouters = [];// 允许访问的
+      let removeRoutes = []; // 移除的
       // special token
-      if (roles.includes('all')) {
-        accessedRouters = asyncRouterList;
-      } else {
-        const res = filterPermissionsRouters(asyncRouterList, roles);
-        accessedRouters = res.accessedRouters;
-        removeRoutes = res.removeRoutes;
-      }
-
+      // if (role == "root") {
+      //   accessedRouters = asyncRouterList;
+      // } else {
+      //
+      // }
+      const res = filterPermissionsRouters(asyncRouterList, role);
+      console.log(res);
+      accessedRouters = res.accessedRouters;
+      removeRoutes = res.removeRoutes;
       this.routers = accessedRouters;
       this.removeRoutes = removeRoutes;
 
@@ -57,8 +62,8 @@ export const usePermissionStore = defineStore('permission', {
       this.removeRoutes.forEach((item: RouteRecordRaw) => {
         router.addRoute(item);
       });
-    },
-  },
+    }
+  }
 });
 
 export function getPermissionStore() {

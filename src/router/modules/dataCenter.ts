@@ -12,19 +12,19 @@ export default [
         path: "achievement",
         name: "achievementDatabase",
         component: () => import("@/pages/cxy/dataCenter/achievement/index.vue"),
-        meta: { title: "成果征集库" }
+        meta: { title: "成果征集库", rolePermission: ["root", "cxy"] }
       },
       {
         path: "detail",
         name: "achievementDetail",
         component: () => import("@/pages/cxy/dataCenter/achievement/detail.vue"),
-        meta: { title: "成果征集表详情", hidden: true }
+        meta: { title: "成果征集表详情", hidden: true, rolePermission: ["root", "cxy"] }
       },
       {
         path: "edit",
         name: "achievementEdit",
         component: () => import("@/pages/cxy/dataCenter/achievement/edit.vue"),
-        meta: { title: "修改成果征集表", hidden: true }
+        meta: { title: "修改成果征集表", hidden: true, rolePermission: ["root", "cxy"] }
       }
     ]
   }

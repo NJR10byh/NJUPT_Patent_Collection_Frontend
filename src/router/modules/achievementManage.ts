@@ -19,13 +19,13 @@ export default [
         path: "addForm",
         name: "addForm",
         component: () => import("@/pages/teacher/achievementManage/addForm/index.vue"),
-        meta: { title: "填写征集表" }
+        meta: { title: "填写征集表", rolePermission: ["root", "teacher"] }
       },
       {
         path: "fixForm",
         name: "fixForm",
         component: () => import("@/pages/teacher/achievementManage/fixForm/index.vue"),
-        meta: { title: "修改征集表", hidden: true }
+        meta: { title: "修改征集表", hidden: true, rolePermission: ["root", "teacher"] }
       }
     ]
   }

@@ -2,7 +2,7 @@
   <header class="login-header">
     <span class="header-logo-container">
         <img src="@/assets/assets-njupt-logo.png" class="logo" />
-     </span>
+    </span>
     <!--    <div class="operations-container">-->
     <!--      <t-button theme="default" shape="square" variant="text" @click="navToGitHub">-->
     <!--        <t-icon name="logo-github" class="icon" />-->
