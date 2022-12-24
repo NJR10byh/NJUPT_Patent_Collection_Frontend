@@ -165,8 +165,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
           // 接口地址
           apiUrl: host,
           // 是否自动添加接口前缀
-          // isJoinPrefix: false, // [本地]环境
-          isJoinPrefix: true, // [开发,生产]环境
+          isJoinPrefix: true,
           /**
            * 接口前缀
            * 例如: https://www.baidu.com/api

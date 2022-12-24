@@ -15,13 +15,38 @@
             <t-icon name="edit" size="18" />
           </t-button>
         </template>
-        <t-row class="content" justify="space-between">
-          <t-col v-for="(item, index) in USER_INFO_LIST" :key="index" class="contract" :span="item.span || 3">
+        <t-row class="content">
+          <t-col class="contract" :span="3">
             <div class="contract-title">
-              {{ item.title }}
+              用户名
             </div>
             <div class="contract-detail">
-              {{ item.content }}
+              {{ userStore.userInfo.username }}
+            </div>
+          </t-col>
+          <t-col class="contract" :span="3">
+            <div class="contract-title">
+              权限
+            </div>
+            <div class="contract-detail">
+              <t-tag theme="success" variant="light" v-if="userStore.userInfo.role=='cxy'">产学院管理员</t-tag>
+              <t-tag theme="primary" variant="light" v-if="userStore.userInfo.role=='teacher'">教师</t-tag>
+            </div>
+          </t-col>
+          <t-col class="contract" :span="3">
+            <div class="contract-title">
+              手机号
+            </div>
+            <div class="contract-detail">
+              {{ PhoneLock(userStore.userInfo.phone) }}
+            </div>
+          </t-col>
+          <t-col class="contract" :span="3">
+            <div class="contract-title">
+              邮箱
+            </div>
+            <div class="contract-detail">
+              {{ userStore.userInfo.email }}
             </div>
           </t-col>
         </t-row>
@@ -109,6 +134,7 @@ import ProductBIcon from "@/assets/assets-product-2.svg";
 import ProductCIcon from "@/assets/assets-product-3.svg";
 import ProductDIcon from "@/assets/assets-product-4.svg";
 import { changeChartsTheme } from "@/utils/color";
+import { PhoneLock } from "../../utils/request/utils";
 
 echarts.use([GridComponent, TooltipComponent, LineChart, CanvasRenderer, LegendComponent]);
 

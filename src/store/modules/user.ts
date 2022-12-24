@@ -5,6 +5,8 @@ const userInfo = {
   id: "",
   username: "",
   name: "",
+  phone: "",
+  email: "",
   role: ""
 };
 
@@ -26,6 +28,8 @@ export const useUserStore = defineStore("user", {
         id: "",
         username: "",
         name: "",
+        phone: "",
+        email: "",
         role: ""
       };
     }
