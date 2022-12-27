@@ -5,16 +5,18 @@
       <t-row justify="space-between" class="cardTop">
         <div class="cardTitle">搜索专利</div>
         <div>
-          <t-radio-group variant="primary-filled" v-model="patentTable.searchValue.authorize">
+          <t-radio-group variant="primary-filled" v-model="patentTable.searchValue.searchCondition.authorize">
             <t-radio-button :value="true">已授权</t-radio-button>
             <t-radio-button :value="false">未授权</t-radio-button>
           </t-radio-group>
         </div>
       </t-row>
       <t-row justify="space-between" class="cardSearchArea">
-        <t-input v-model="patentTable.searchValue.zlmc" placeholder="专利名称" style="width: 45%;"></t-input>
-        <t-input v-model="patentTable.searchValue.cymd" placeholder="专利发明人" style="width: 45%;"></t-input>
-        <t-button theme="primary" style="width: 8%;" @click="getPatentData">
+        <t-input v-model="patentTable.searchValue.searchCondition.zlh" placeholder="专利号"
+                 style="width: 45%;"></t-input>
+        <t-input v-model="patentTable.searchValue.searchCondition.zlmc" placeholder="专利名称"
+                 style="width: 45%;"></t-input>
+        <t-button theme="primary" style="width: 8%;font-weight: bold;" @click="getPatentData">
           <template #icon>
             <SearchIcon />
           </template>
@@ -34,6 +36,7 @@
         :pagination-affixed-bottom="{ offsetBottom: '0',container: getContainer }"
         @page-change="patentTablePageChange"
         style="margin-top: 10px"
+        size="small"
       >
         <template #settings="slotProps">
           <t-button theme="success" @click="getFormInfo(slotProps.row)">
@@ -60,6 +63,7 @@
         :header-affixed-top="{ offsetTop, container: getContainer }"
         :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
         style="margin-top: 10px"
+        size="small"
       >
         <template #settings="slotProps">
           <t-button theme="danger" @click="getFormInfo(slotProps.row)">
@@ -188,6 +192,7 @@ import { CheckIcon, DeleteIcon, SearchIcon } from "tdesign-icons-vue-next";
 import { validateEmail, validateMobilePhone } from "@/utils/validate";
 import { MessagePlugin } from "tdesign-vue-next";
 import { request } from "@/utils/request";
+import { setObjToUrlParams } from "@/utils/request/utils";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -213,17 +218,19 @@ const patentTable = ref({
   // 表格分页
   pagination: {
     total: 0,
-    pageSize: 5,
     current: 1,
+    pageSize: 10,
     showPageSize: false
   },
   // 查询专利
   searchValue: {
     currPage: 1,
-    size: 5,
-    authorize: true,// 是否授权
-    zlmc: "",// 专利名称
-    cymd: "" // 成员名单
+    size: 10,
+    searchCondition: {
+      authorize: true,// 是否授权
+      zlh: "",// 专利号
+      zlmc: ""// 专利名称
+    }
   }
 });
 /* 已选择专利 */
@@ -283,7 +290,7 @@ const transformWayCheckList = ref([]);
 // 组件挂载完成后执行
 onMounted(() => {
   // 获取表格数据
-  const requestUrl = "/form/getFormPage";
+  const requestUrl = "/patent/getPatentPageByCondition";
   getPatentData(requestUrl);
 });
 /**
@@ -292,7 +299,7 @@ onMounted(() => {
 // 分页钩子
 const patentTablePageChange = (curr) => {
   console.log("分页变化", curr);
-  const requestUrl = "/form/getFormPage";
+  const requestUrl = "/patent/getPatentPageByCondition";
   patentTable.value.searchValue.currPage = curr.current;
   patentTable.value.searchValue.size = curr.pageSize;
   patentTable.value.pagination.current = curr.current;
@@ -315,23 +322,23 @@ const transformWayChange = () => {
  */
 // 获取专利数据
 const getPatentData = async (requestUrl) => {
-  // patentTableLoading.value = true;
-  // requestUrl = setObjToUrlParams(requestUrl, searchValue.value);
-  // request.post({
-  //   url: requestUrl,
-  //   data: searchValue.value
-  // }).then(res => {
-  //   console.log(res);
-  //   formListTableData.value = res.records;
-  //   pagination.value.total = res.total;
-  //   for (let i = 0; i < formListTableData.value.length; i++) {
-  //     formListTableData.value[i].index = (pagination.value.current - 1) * pagination.value.pageSize + i + 1;
-  //   }
-  // }).catch(err => {
-  //   console.log(err);
-  // }).finally(() => {
-  //   patentTableLoading.value = false;
-  // });
+  patentTable.value.tableLoading = true;
+  requestUrl = setObjToUrlParams(requestUrl, patentTable.value.searchValue);
+  request.post({
+    url: requestUrl,
+    data: patentTable.value.searchValue
+  }).then(res => {
+    console.log(res);
+    patentTable.value.pagination.total = res.total;
+    patentTable.value.tableData = res.records;
+    for (let i = 0; i < patentTable.value.tableData.length; i++) {
+      patentTable.value.tableData[i].index = (patentTable.value.pagination.current - 1) * patentTable.value.pagination.pageSize + i + 1;
+    }
+  }).catch(err => {
+    console.log(err);
+  }).finally(() => {
+    patentTable.value.tableLoading = false;
+  });
 };
 
 // 提交表单
