@@ -5,7 +5,8 @@
       <t-row justify="space-between" class="cardTop">
         <div class="cardTitle">搜索专利</div>
         <div>
-          <t-radio-group variant="primary-filled" v-model="patentTable.searchValue.searchCondition.authorize">
+          <t-radio-group variant="primary-filled" v-model="patentTable.searchValue.searchCondition.authorize"
+                         @change="getPatentData('/patent/getPatentPageByCondition')">
             <t-radio-button :value="true">已授权</t-radio-button>
             <t-radio-button :value="false">未授权</t-radio-button>
           </t-radio-group>
@@ -13,10 +14,11 @@
       </t-row>
       <t-row justify="space-between" class="cardSearchArea">
         <t-input v-model="patentTable.searchValue.searchCondition.zlh" placeholder="专利号"
-                 style="width: 45%;"></t-input>
+                 style="width: 45%;" clearable></t-input>
         <t-input v-model="patentTable.searchValue.searchCondition.zlmc" placeholder="专利名称"
-                 style="width: 45%;"></t-input>
-        <t-button theme="primary" style="width: 8%;font-weight: bold;" @click="getPatentData">
+                 style="width: 45%;" clearable></t-input>
+        <t-button theme="primary" style="width: 8%;font-weight: bold;"
+                  @click="getPatentData('/patent/getPatentPageByCondition')">
           <template #icon>
             <SearchIcon />
           </template>
@@ -192,7 +194,6 @@ import { CheckIcon, DeleteIcon, SearchIcon } from "tdesign-icons-vue-next";
 import { validateEmail, validateMobilePhone } from "@/utils/validate";
 import { MessagePlugin } from "tdesign-vue-next";
 import { request } from "@/utils/request";
-import { setObjToUrlParams } from "@/utils/request/utils";
 
 const store = useSettingStore();
 const router = useRouter();
@@ -323,7 +324,6 @@ const transformWayChange = () => {
 // 获取专利数据
 const getPatentData = async (requestUrl) => {
   patentTable.value.tableLoading = true;
-  requestUrl = setObjToUrlParams(requestUrl, patentTable.value.searchValue);
   request.post({
     url: requestUrl,
     data: patentTable.value.searchValue
