@@ -55,15 +55,15 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         /**
          * 测试环境
          */
-        "/collection_dev": {
-          target: "http://47.115.206.210:8080",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/collection_dev/, "")
-        }
+        // "/collection_dev": {
+        //   target: "http://47.115.206.210:8080",
+        //   changeOrigin: true,
+        //   rewrite: (path) => path.replace(/^\/collection_dev/, "")
+        // }
         /**
          * 现网环境
          */
-        // "/collection_dev": "http://cgzh.njupt.edu.cn:8080" // 开发环境
+        "/collection_dev": "http://cgzh.njupt.edu.cn:8080" // 开发环境
       }
     }
   };
