@@ -41,7 +41,7 @@
         size="small"
       >
         <template #settings="slotProps">
-          <t-button theme="success" @click="getFormInfo(slotProps.row)">
+          <t-button theme="success" @click="choosePatent(slotProps)">
             <template #icon>
               <CheckIcon />
             </template>
@@ -68,7 +68,7 @@
         size="small"
       >
         <template #settings="slotProps">
-          <t-button theme="danger" @click="getFormInfo(slotProps.row)">
+          <t-button theme="danger" @click="deletePatent(slotProps)">
             <template #icon>
               <DeleteIcon />
             </template>
@@ -246,7 +246,7 @@ const choosedPatentTable = ref({
 const form = ref(null);
 //成果征集表内容
 const formInfo = ref({
-  patentList: "1001,1167,928", // 专利ID集合
+  patentList: [], // 专利ID集合
 
   achievementName: "成果名称",// 成果名称
   achievementContactPerson: "成果联系人",// 成果联系人
@@ -340,6 +340,20 @@ const getPatentData = async (requestUrl) => {
     patentTable.value.tableLoading = false;
   });
 };
+// 选择专利
+const choosePatent = (slotProps) => {
+  console.log(slotProps);
+  choosedPatentTable.value.tableData.push(slotProps.row);
+  formInfo.value.patentList.push(slotProps.row.wid)
+  console.log(formInfo.value.patentList)
+}
+// 选择专利
+const deletePatent = (slotProps) => {
+  console.log(slotProps);
+  choosedPatentTable.value.tableData.splice(slotProps.rowIndex,1);
+  formInfo.value.patentList = formInfo.value.patentList.filter(item => item != slotProps.row.wid)
+  console.log(formInfo.value.patentList)
+}
 
 // 提交表单
 const onSubmit = ({ validateResult, firstError, e }) => {
