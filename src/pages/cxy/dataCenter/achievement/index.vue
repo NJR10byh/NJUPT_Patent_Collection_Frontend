@@ -56,9 +56,9 @@
           <t-button theme="primary" @click="getFormInfo(slotProps.row)">
             查看
           </t-button>
-          <t-button theme="warning" @click="editForm(slotProps.row)">
-            修改
-          </t-button>
+          <!--          <t-button theme="warning" @click="editForm(slotProps.row)">-->
+          <!--            修改-->
+          <!--          </t-button>-->
           <t-popconfirm
             content="确认删除吗?"
             theme="danger"

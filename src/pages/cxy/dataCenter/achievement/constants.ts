@@ -54,7 +54,7 @@ export const FORM_TABLE_COLUMNS = [
   {
     fixed: "right",
     colKey: "settings",
-    width: 260,
+    width: 180,
     title: "操作"
   }
 ];
@@ -101,12 +101,5 @@ export const CHOOSED_PATENT_TABLE_COLUMNS = [
     colKey: "zhgxsj",
     width: 100,
     ellipsis: true
-  },
-  {
-    fixed: "right",
-    align: "center",
-    colKey: "settings",
-    width: 50,
-    title: "操作"
   }
 ];

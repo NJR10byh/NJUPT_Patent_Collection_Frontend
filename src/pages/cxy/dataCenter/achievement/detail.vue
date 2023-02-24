@@ -113,7 +113,6 @@
         :header-affixed-top="{ offsetTop, container: getContainer }"
         :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
         style="margin-top: 10px"
-        size="small"
       >
       </t-table>
     </t-card>
@@ -191,9 +190,9 @@ onMounted(() => {
   getFormDetail();
 });
 
-const getFormDetail = () => {
+const getFormDetail = async () => {
   let requestUrl = setObjToUrlParams("/form/getFormById", route.query);
-  request.post({
+  await request.post({
     url: requestUrl
   }).then(res => {
     formData.value = {
@@ -209,6 +208,25 @@ const getFormDetail = () => {
   }).finally(() => {
 
   });
+  for (let i = 0; i < formData.value.patentList.length; i++) {
+    let obj = {
+      wid: formData.value.patentList[i]
+    };
+    let requestUrl = setObjToUrlParams("/patent/getPatentByWid", obj);
+    await request.post({
+      url: requestUrl
+    }).then(res => {
+      console.log(res);
+      choosedPatentTable.value.tableData.push(res);
+      for (let i = 0; i < choosedPatentTable.value.tableData.length; i++) {
+        choosedPatentTable.value.tableData[i].index = i + 1;
+      }
+    }).catch(err => {
+      console.log(err);
+    }).finally(() => {
+
+    });
+  }
 };
 
 </script>
