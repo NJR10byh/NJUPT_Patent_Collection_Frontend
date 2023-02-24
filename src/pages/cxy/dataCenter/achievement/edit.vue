@@ -250,7 +250,7 @@ const form = ref(null);
 //成果征集表内容
 const formInfo = ref({
   id: "",// formID
-  patentList: "", // 专利ID集合
+  patentList: [], // 专利ID集合
 
   achievementName: "",// 成果名称
   achievementContactPerson: "",// 成果联系人

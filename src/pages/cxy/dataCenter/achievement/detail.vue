@@ -5,8 +5,11 @@
   * @version 0.1.0
 -->
 <template>
-  <div class="detail-advanced">
-    <t-card title="成果征集表详情">
+  <div class=" detail-advanced">
+    <t-card class="card-container detailForm-card">
+      <t-row justify="space-between" class="cardTop">
+        <div class="cardTitle">成果征集表详情</div>
+      </t-row>
       <div class="info-block">
         <div class="info-item">
           <h1>成果名称</h1>
@@ -94,25 +97,60 @@
         </div>
       </div>
     </t-card>
+
+    <!-- 专利列表 -->
+    <t-card class="card-container choosedPatents-card">
+      <t-row justify="space-between" class="cardTop">
+        <div class="cardTitle">已选择专利</div>
+      </t-row>
+      <t-table
+        :data="choosedPatentTable.tableData"
+        :columns="CHOOSED_PATENT_TABLE_COLUMNS"
+        row-key="id"
+        vertical-align="center"
+        hover
+        :loading="choosedPatentTable.tableLoading"
+        :header-affixed-top="{ offsetTop, container: getContainer }"
+        :horizontal-scroll-affixed-bottom="{ offsetBottom: '64', container: getContainer }"
+        style="margin-top: 10px"
+        size="small"
+      >
+      </t-table>
+    </t-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { request } from "@/utils/request";
 import { setObjToUrlParams } from "@/utils/request/utils";
+import { CHOOSED_PATENT_TABLE_COLUMNS } from "@/pages/cxy/dataCenter/achievement/constants";
+import { prefix } from "@/config/global";
+import { useSettingStore } from "@/store";
 
 const router = useRouter();
 const route = useRoute();
+const store = useSettingStore();
 
 /**
  * data
  */
+// 根据是否使用多Tab页判断offsetTop
+const offsetTop = computed(() => {
+  return store.isUseTabsRouter ? 48 : 0;
+});
+// 获取当前容器
+const getContainer = () => {
+  return document.querySelector(`.${prefix}-layout`);
+};
+/**
+ * 表单相关
+ */
 const formData = ref(
   {
     id: null,
-    patentList: "",
+    patentList: [],
     achievementName: "",
     achievementContactPerson: "",
     jobTitle: "",
@@ -133,6 +171,14 @@ const formData = ref(
     updateTime: ""
   }
 );
+/**
+ * 表格相关
+ */
+/* 教师选择的专利 */
+const choosedPatentTable = ref({
+  tableLoading: false,// 表格加载
+  tableData: []// 表格数据
+});
 
 /**
  * methods
@@ -150,7 +196,6 @@ const getFormDetail = () => {
   request.post({
     url: requestUrl
   }).then(res => {
-    console.log(res);
     formData.value = {
       ...res,
       technicalClassification: res.technicalClassification.replace(/&#10;/g, "\n"),
@@ -170,4 +215,28 @@ const getFormDetail = () => {
 
 <style lang="less" scoped>
 @import url('index.less');
+
+.card-container {
+  &:first-child {
+    margin-top: 0;
+  }
+
+  margin-top: 10px;
+
+  .cardTop {
+    //border: 1px solid red;
+    align-items: center;
+
+    .cardTitle {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+}
+
+.detailForm-card {
+  .info-block {
+    margin-top: 10px;
+  }
+}
 </style>

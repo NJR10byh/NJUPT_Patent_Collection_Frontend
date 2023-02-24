@@ -41,7 +41,7 @@
         size="small"
       >
         <template #settings="slotProps">
-          <t-button theme="success" @click="choosePatent(slotProps)">
+          <t-button theme="success" @click="choosePatent(slotProps)" :disabled="formInfo.patentList.indexOf(slotProps.row.wid)!=-1">
             <template #icon>
               <CheckIcon />
             </template>
@@ -369,6 +369,7 @@ const onSubmit = ({ validateResult, firstError, e }) => {
       keyTechnologies: formInfo.value.keyTechnologies.replace(/\n/g, "&#10;"),
       fieldMarket: formInfo.value.fieldMarket.replace(/\n/g, "&#10;")
     };
+    console.log(formInfo.value)
     request.post({
       url: requestUrl,
       data: formInfo.value
