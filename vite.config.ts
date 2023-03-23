@@ -47,11 +47,11 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         /**
          * 本地环境
          */
-        "/collection_dev": {
-          target: "http://localhost:8089",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/collection_dev/, "")
-        }
+        // "/collection_dev": {
+        //   target: "http://localhost:8089",
+        //   changeOrigin: true,
+        //   rewrite: (path) => path.replace(/^\/collection_dev/, "")
+        // }
         /**
          * 测试环境
          */
@@ -63,7 +63,7 @@ export default ({ mode }: ConfigEnv): UserConfig => {
         /**
          * 现网环境
          */
-        // "/collection_dev": "http://cgzh.njupt.edu.cn:8080" // 开发环境
+        "/collection_dev": "http://cgzh.njupt.edu.cn:8080" // 开发环境
       }
     }
   };

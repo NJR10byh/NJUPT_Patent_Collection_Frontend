@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="!isRefreshing" v-slot="{ Component }">
+  <router-view v-if="!isRefreshing" v-slot="{ Component }" :key="activeRouteFullPath">
     <transition name="fade" mode="out-in">
       <keep-alive :include="aliveViews">
         <component :is="Component" />
@@ -18,11 +18,11 @@ import { useTabsRouterStore } from "@/store";
 //  <component :is="Component" :key="activeRouteFullPath" />
 // </suspense>
 
-// import { useRouter } from 'vue-router';
-// const activeRouteFullPath = computed(() => {
-//   const router = useRouter();
-//   return router.currentRoute.value.fullPath;
-// });
+import { useRouter } from 'vue-router';
+const activeRouteFullPath = computed(() => {
+  const router = useRouter();
+  return router.currentRoute.value.fullPath;
+});
 
 const aliveViews = computed(() => {
   const tabsRouterStore = useTabsRouterStore();
